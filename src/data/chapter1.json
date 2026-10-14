@@ -44,7 +44,8 @@
       "choices": [
         {
           "label": "I'll help you plan it, Grandma. We're really going.",
-          "next": 6
+          "next": 6,
+          "rapport_delta": 2
         },
         {
           "label": "I don't really know much about Aklan, but fine, let's try.",
