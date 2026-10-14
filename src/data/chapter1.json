@@ -609,13 +609,6 @@
       "start_index_if_flag": {
         "default": 1
       }
-    },
-    {
-      "type": "dialogue",
-      "speaker": "",
-      "text": "",
-      "next": null,
-      "word_ids": []
     }
   ]
 }
