@@ -20,7 +20,7 @@
     {
       "speaker": "",
       "text": "",
-      "next": null,
+      "next": 1,
       "word_ids": []
     },
     {
