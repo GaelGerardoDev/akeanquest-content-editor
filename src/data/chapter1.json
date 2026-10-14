@@ -53,7 +53,8 @@
         },
         {
           "label": "Isn't that too far? You might have a hard time, Grandma.",
-          "next": 8
+          "next": 8,
+          "rapport_delta": -2
         }
       ],
       "next": null,
