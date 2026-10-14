@@ -258,7 +258,8 @@
         {
           "label": "I don't even know if I need this, honestly.",
           "next": 10,
-          "rapport_delta": -2
+          "rapport_delta": -2,
+          "patience_delta": -10
         }
       ],
       "next": null,
