@@ -57,6 +57,7 @@ export default function BlockSceneScriptEditor({ entries, createTemplate, onSave
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const selected = entries.find((entry) => entry.id === selectedId) ?? null;
   const data = asObject(selected?.data);
+  const isCurrentScene = selected?.id.startsWith("__scene__/") ?? false;
   const actions = Array.isArray(data?.actions) ? data.actions : [];
   const filtered = useMemo(() => entries.filter((entry) => (entry.id + " " + entry.label).toLowerCase().includes(search.toLowerCase())), [entries, search]);
 
@@ -152,16 +153,16 @@ export default function BlockSceneScriptEditor({ entries, createTemplate, onSave
             <div><strong style={{ fontSize: 15 }}>{String(data.name ?? selected.label ?? selected.id)}</strong><div style={{ color: "var(--ui-text-muted)", fontSize: 11, marginTop: 3 }}>{selected.id}.json · {actions.length} action{actions.length === 1 ? "" : "s"}</div></div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
               <span aria-live="polite" style={{ fontSize: 11, color: "var(--ui-text-muted)", marginRight: 4 }}>{status}</span>
-              <button style={button} onClick={duplicate}>Duplicate</button>
-              <button style={{ ...button, color: "var(--ui-red)" }} onClick={() => { if (window.confirm("Delete " + selected.id + "? This cannot be undone.")) { onDelete(selected.id); setSelectedId(""); } }}>Delete</button>
+              {!isCurrentScene && <button style={button} onClick={duplicate}>Duplicate</button>}
+              {!isCurrentScene && <button style={{ ...button, color: "var(--ui-red)" }} onClick={() => { if (window.confirm("Delete " + selected.id + "? This cannot be undone.")) { onDelete(selected.id); setSelectedId(""); } }}>Delete</button>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", padding: "10px 12px", background: "var(--ui-surface-soft)", border: "1px solid var(--ui-border)", borderRadius: 9 }}>
+          {!isCurrentScene && <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", padding: "10px 12px", background: "var(--ui-surface-soft)", border: "1px solid var(--ui-border)", borderRadius: 9 }}>
             <label style={{ fontSize: 11, color: "var(--ui-text-muted)", whiteSpace: "nowrap" }}>Script name</label>
             <input aria-label="Script name" style={{ ...input, width: 220 }} value={String(data.name ?? "")} onChange={(e) => commit({ ...data, name: e.target.value })} />
             <button style={button} onClick={addScriptField}>+ Metadata field</button>
             <span style={{ fontSize: 11, color: "var(--ui-text-muted)" }}>Other top-level JSON fields are retained.</span>
-          </div>
+          </div>}
           <div style={{ flex: 1, minHeight: 0, overflow: "auto", borderRadius: 10, border: "1px solid var(--ui-border)", background: "radial-gradient(circle at 1px 1px, rgba(150,165,180,.14) 1px, transparent 0) 0 0 / 18px 18px, var(--ui-bg, #171e26)", padding: 18 }}>
             <div style={{ maxWidth: 850, margin: "0 auto" }}>
               <div style={{ color: "var(--ui-text-muted)", fontSize: 11, marginBottom: 12, letterSpacing: ".08em", textTransform: "uppercase" }}>When this cutscene runs</div>
