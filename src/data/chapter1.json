@@ -18,7 +18,7 @@
       "type": "dialogue"
     },
     {
-      "speaker": "",
+      "speaker": "Player",
       "text": "",
       "next": 1,
       "word_ids": []
