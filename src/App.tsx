@@ -139,7 +139,7 @@ function App() {
   }));
   const scriptEntries: LibraryEntry[] = Object.entries(sceneScripts).map(([id, data]) => ({
     id,
-    label: String((!Array.isArray(data) && (data as { name?: unknown })?.name) ?? id),
+    label: Array.isArray(data) ? id : String((data as { name?: unknown } | null)?.name ?? id),
     // Some existing scripts are raw action arrays instead of { name, actions } objects.
     // Normalize only for the block UI; onSave writes them back as arrays.
     data: Array.isArray(data) ? { name: id, actions: data } : data,
