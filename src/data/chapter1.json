@@ -602,5 +602,20 @@
         "word_ids": []
       }
     ]
-  }
+  },
+  "scene_0_on_game_start": [
+    {
+      "type": "start_router",
+      "start_index_if_flag": {
+        "default": 1
+      }
+    },
+    {
+      "type": "dialogue",
+      "speaker": "",
+      "text": "",
+      "next": null,
+      "word_ids": []
+    }
+  ]
 }
