@@ -1,6 +1,8 @@
 export type Choice = {
   label: string;
   next: number | null;
+  rapport_delta?: -2 | 0 | 2;
+  patience_delta?: -10 | 0 | 10;
 };
 
 export type PhraseBuilderNode = {
