@@ -605,11 +605,10 @@
   },
   "scene_0_on_game_start": [
     {
-      "type": "dialogue",
-      "speaker": "",
-      "text": "",
-      "next": 2,
-      "word_ids": []
+      "type": "start_router",
+      "start_index_if_flag": {
+        "default": 1
+      }
     },
     {
       "speaker": "",
