@@ -175,9 +175,11 @@ export default function BlockSceneScriptEditor({ entries, createTemplate, onSave
                   <div style={{ position: "relative", zIndex: 1, borderRadius: "10px 10px 8px 8px", overflow: "visible", background: color, boxShadow: "0 3px 0 rgba(0,0,0,.22)", border: "1px solid rgba(255,255,255,.15)" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 12px 9px", color: "white", borderBottom: "1px solid rgba(0,0,0,.14)" }}>
                       <span aria-hidden="true" style={{ cursor: "grab", fontSize: 16 }}>⠿</span><strong style={{ fontSize: 13, textTransform: "capitalize" }}>{labelFor(type)}</strong><span style={{ fontSize: 10, opacity: .8 }}>BLOCK {index + 1}</span><span style={{ flex: 1 }} />
-                      <button title="Move block up" aria-label={"Move action " + (index + 1) + " up"} disabled={index === 0} onClick={() => moveAction(index, index - 1)} style={{ ...button, padding: "3px 7px", color: "white", background: "rgba(0,0,0,.14)", borderColor: "rgba(255,255,255,.25)" }}>↑</button>
-                      <button title="Move block down" aria-label={"Move action " + (index + 1) + " down"} disabled={index === actions.length - 1} onClick={() => moveAction(index, index + 1)} style={{ ...button, padding: "3px 7px", color: "white", background: "rgba(0,0,0,.14)", borderColor: "rgba(255,255,255,.25)" }}>↓</button>
-                      <button title="Delete action" aria-label={"Delete action " + (index + 1)} onClick={() => removeAction(index)} style={{ ...button, padding: "3px 7px", color: "white", background: "rgba(0,0,0,.14)", borderColor: "rgba(255,255,255,.25)" }}>×</button>
+                      {!isCurrentScene && <>
+                        <button title="Move block up" aria-label={"Move action " + (index + 1) + " up"} disabled={index === 0} onClick={() => moveAction(index, index - 1)} style={{ ...button, padding: "3px 7px", color: "white", background: "rgba(0,0,0,.14)", borderColor: "rgba(255,255,255,.25)" }}>↑</button>
+                        <button title="Move block down" aria-label={"Move action " + (index + 1) + " down"} disabled={index === actions.length - 1} onClick={() => moveAction(index, index + 1)} style={{ ...button, padding: "3px 7px", color: "white", background: "rgba(0,0,0,.14)", borderColor: "rgba(255,255,255,.25)" }}>↓</button>
+                        <button title="Delete action" aria-label={"Delete action " + (index + 1)} onClick={() => removeAction(index)} style={{ ...button, padding: "3px 7px", color: "white", background: "rgba(0,0,0,.14)", borderColor: "rgba(255,255,255,.25)" }}>×</button>
+                      </>}
                     </div>
                     {object ? <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, padding: 12, color: "white" }}>
                       {Object.entries(object).map(([key, value]) => <div key={key} style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: key === "text" || key === "dialogue" ? "min(100%, 320px)" : 120, flex: key === "text" || key === "dialogue" ? "1 1 320px" : "0 1 190px" }}>
@@ -192,11 +194,12 @@ export default function BlockSceneScriptEditor({ entries, createTemplate, onSave
                   <div style={{ position: "absolute", left: 28, bottom: -8, width: 22, height: 12, borderRadius: "0 0 7px 7px", background: color, zIndex: 2 }} />
                 </div>;
               })}
-              <div style={{ marginTop: 22, padding: 14, border: "2px dashed var(--ui-border)", borderRadius: 10, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+              {!isCurrentScene && <div style={{ marginTop: 22, padding: 14, border: "2px dashed var(--ui-border)", borderRadius: 10, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
                 <span style={{ fontSize: 12, color: "var(--ui-text-muted)", marginRight: 4 }}>Snap on another action:</span>
                 {["dialogue", "wait", "sound", "background", "choice"].map((type) => <button key={type} onClick={() => addAction(type)} style={{ ...button, color: "white", background: colors[type], borderColor: "rgba(255,255,255,.2)", borderRadius: "7px 7px 4px 4px" }}>+ {labelFor(type)}</button>)}
                 <button onClick={() => { const type = prompt("Action type name:"); if (type?.trim()) addAction(type.trim()); }} style={button}>+ Custom action</button>
-              </div>
+              </div>}
+              {isCurrentScene && <p style={{ color: "var(--ui-text-muted)", fontSize: 11 }}>Editing an existing scene: node fields save to the original chapter JSON. Reordering, adding, and deleting nodes are disabled here to preserve node-index links.</p>}
             </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, color: "var(--ui-text-muted)", fontSize: 11 }}>
