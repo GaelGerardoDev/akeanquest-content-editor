@@ -430,6 +430,26 @@ function SceneInspector({
         <div className="scene-inspector-header"><span>BRANCH</span><strong>Choice #{selected.choiceIndex + 1}</strong><small>Node #{selected.sceneIndex}</small></div>
         <div className="scene-inspector-body">
           <Field label="Label"><textarea value={choice.label} onChange={(e) => update({ label: e.target.value })} rows={5} /></Field>
+          <Field label="Rapport Delta">
+            <select
+              value={choice.rapport_delta ?? 0}
+              onChange={(e) => update({ rapport_delta: Number(e.target.value) as Choice["rapport_delta"] })}
+            >
+              <option value={-2}>Negative (−2)</option>
+              <option value={0}>Neutral (0)</option>
+              <option value={2}>Positive (+2)</option>
+            </select>
+          </Field>
+          <Field label="Patience Delta">
+            <select
+              value={choice.patience_delta ?? 0}
+              onChange={(e) => update({ patience_delta: Number(e.target.value) as Choice["patience_delta"] })}
+            >
+              <option value={-10}>Negative (−10)</option>
+              <option value={0}>Neutral (0)</option>
+              <option value={10}>Positive (+10)</option>
+            </select>
+          </Field>
           <Field label="Goes to"><select value={choice.next ?? ""} onChange={(e) => update({ next: e.target.value === "" ? null : Number(e.target.value) })}><option value="">No destination</option>{scene.map((_, i) => <option key={i} value={i}>Node #{i} — {title(scene[i], i)}</option>)}</select></Field>
           <div className="scene-inspector-actions"><button type="button" className="danger" onClick={() => {
             const choices = (parent.choices ?? []).filter((_, i) => i !== selected.choiceIndex);
@@ -575,7 +595,7 @@ function SceneInspector({
           <small>{wordResolution.wordIds.length ? "Generated from \\word references in the text. They update when the word bank IDs change." : "Search the word bank by Akeanon word, ID, or English gloss. Type \\word in the text to link it automatically."}</small></Field>
         <Field label="Next"><select value={node.next ?? ""} onChange={(e) => update("next", e.target.value === "" ? null : Number(e.target.value))}><option value="">End</option>{scene.map((_, i) => <option key={i} value={i}>Node #{i} — {title(scene[i], i)}</option>)}</select></Field>
         <Field label="Set Flag on Enter"><input value={node.set_flag_on_enter ?? ""} onChange={(e) => update("set_flag_on_enter", e.target.value || undefined)} placeholder="optional flag" /></Field>
-        <div className="scene-inspector-section"><div className="scene-inspector-section-title">Choices</div>{node.choices?.map((choice, i) => <button key={i} type="button" className="scene-inspector-choice" onClick={() => onSelectChoice(i)}><span>#{i + 1}</span>{choice.label || "Empty choice"}</button>)}<button type="button" onClick={() => onChange(selected.sceneIndex, { ...node, choices: [...(node.choices ?? []), { label: "New choice", next: null }] })}>+ Add Choice</button></div>
+        <div className="scene-inspector-section"><div className="scene-inspector-section-title">Choices</div>{node.choices?.map((choice, i) => <button key={i} type="button" className="scene-inspector-choice" onClick={() => onSelectChoice(i)}><span>#{i + 1}</span>{choice.label || "Empty choice"}</button>)}<button type="button" onClick={() => onChange(selected.sceneIndex, { ...node, choices: [...(node.choices ?? []), { label: "New choice", next: null, rapport_delta: 0, patience_delta: 0 }] })}>+ Add Choice</button></div>
         <div className="scene-inspector-actions"><button type="button" onClick={() => onAdd(selected.sceneIndex)}>+ Add Node</button><button type="button" onClick={() => onDuplicate(selected.sceneIndex)}>Duplicate</button><button type="button" className="danger" onClick={() => onDelete(selected.sceneIndex)}>Delete</button></div>
       </div>
     </aside>
