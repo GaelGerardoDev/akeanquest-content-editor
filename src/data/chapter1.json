@@ -257,7 +257,8 @@
         },
         {
           "label": "I don't even know if I need this, honestly.",
-          "next": 10
+          "next": 10,
+          "rapport_delta": -2
         }
       ],
       "next": null,
