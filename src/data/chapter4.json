@@ -10,23 +10,27 @@
       "speaker": "Rose",
       "text": "hara do mangrove , bukon eang it para sa bisita kundi para protektahan.",
       "next": 2,
-      "translation": "This is the mangrove eco-park. It’s not just for visitors, but truly for conservation."
+      "translation": "This is the mangrove eco-park. It’s not just for visitors, but truly for conservation.",
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "It looks peaceful. I didn’t expect it to be this wide.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Manong Ambo",
       "text": "Mayad-ayad nga agahon , mga bisita. iya kamo para makita do aton nga mangroves?",
       "next": 4,
-      "translation": "Good morning, visitors. Are you here to see our coast and mangroves?"
+      "translation": "Good morning, visitors. Are you here to see our coast and mangroves?",
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Yes, Anong Ambo. He’s the caretaker here.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     }
   ],
   "scene_2_learning_about_mangroves": [
@@ -40,23 +44,27 @@
       "speaker": "Anong Ambo",
       "text": "ro mga ugat ru gakapyot sa eugta. kaya indi masamad bisan it bagyo.",
       "next": 2,
-      "translation": "The roots hold the soil. It won’t collapse even during storms."
+      "translation": "The roots hold the soil. It won’t collapse even during storms.",
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "So this protects the town?",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Anong Ambo",
       "text": "hara gid. Kung uwa ra, ro baeas ag tubi hay magatao it kaeainan",
       "next": 4,
-      "translation": "Exactly. Without this, the sand and water would cause danger."
+      "translation": "Exactly. Without this, the sand and water would cause danger.",
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "That’s why they say mangroves are natural shields.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     }
   ],
   "scene_3_fishing_lesson": [
@@ -70,7 +78,8 @@
       "speaker": "Anong Ambo",
       "text": "Gusto ninyo magkantoguhan magpamunit? bukon eang para sa isda, kundi para sa pagtuon.",
       "next": 2,
-      "translation": "Do you want to try fishing? Not just for fish, but for learning."
+      "translation": "Do you want to try fishing? Not just for fish, but for learning.",
+      "type": "dialogue"
     },
     {
       "speaker": "",
@@ -89,22 +98,26 @@
           "next": 4
         }
       ],
-      "next": null
+      "next": null,
+      "type": "dialogue"
     },
     {
       "speaker": "Anong Ambo",
       "text": "Mayad! iya, sunod kakon.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     },
     {
       "speaker": "Anong Ambo",
       "text": "bukon problema. Watching teaches too.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "You’ll miss out. It’s part of the experience, balikbayan.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     }
   ],
   "scene_4_vocabulary_practice_round_nature_and_actions": [
@@ -123,7 +136,8 @@
         "w057",
         "w059",
         "w066"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
@@ -134,7 +148,8 @@
         "w073",
         "w078",
         "w079"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
@@ -144,17 +159,20 @@
         "w176",
         "w089",
         "w099"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "Okay, so pamunit is what Anong Ambo said earlier.",
-      "next": 5
+      "next": 5,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Correct. And tanom — you’ll hear that a lot here, since mangroves are plants.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     }
   ],
   "scene_5_reflection": [
@@ -168,17 +186,20 @@
       "speaker": "Lola Jonabel",
       "text": "maabo aton nga natun-an makarang adlaw. bukon eang it mga haeambaeun, kundi pati kultura man.",
       "next": 2,
-      "translation": "We learned so much today. Not just words, but culture too."
+      "translation": "We learned so much today. Not just words, but culture too.",
+      "type": "dialogue"
     },
     {
       "speaker": "Papa Jobert",
       "text": "True. This place reminds me of my childhood.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "And now it’s part of yours, balikbayan.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     }
   ],
   "idle_pool_manong_ambo": {

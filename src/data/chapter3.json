@@ -13,23 +13,27 @@
       "translation": "Welcome, visitors. Here, look at our weaving.",
       "word_ids": [
         "w053"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "Whoa. Amazing, Grandma — I mean, Anang. Sorry, it’s my first time seeing a loom like this.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "Uwat kaso. Abo man nga bisita ro nangangawa iya .",
       "next": 4,
-      "translation": "It’s alright. Many visitors are surprised here too."
+      "translation": "It’s alright. Many visitors are surprised here too.",
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "This whole community weaves piña cloth. Been doing it for generations — older than any of us.",
-      "next": 5
+      "next": 5,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
@@ -39,7 +43,8 @@
       "word_ids": [
         "w057",
         "w059"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "",
@@ -58,28 +63,33 @@
           "next": 8
         }
       ],
-      "next": null
+      "next": null,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "Saeamat, apo. Not many young ones say that anymore.",
-      "next": 9
+      "next": 9,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "Step by step. Even I took years.",
-      "next": 9
+      "next": 9,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "Machines can’t feel the thread the way a hand does. That’s the difference.",
-      "next": 10
+      "next": 10,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "Gusto mo ubrahon? iya, sunod ka kakon",
       "next": null,
-      "translation": "Do you want to try? Here, follow me."
+      "translation": "Do you want to try? Here, follow me.",
+      "type": "dialogue"
     }
   ],
   "scene_2_trying_the_loom": [
@@ -92,12 +102,14 @@
     {
       "speaker": "Rose",
       "text": "Oh, this I have to see. Balikbayan versus loom. Place your bets.",
-      "next": 2
+      "next": 2,
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "Gee, thanks for the confidence, Rose.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
@@ -106,7 +118,8 @@
       "translation": "Slowly. This isn’t about whose faster.",
       "word_ids": [
         "w006"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "",
@@ -125,28 +138,33 @@
           "next": 6
         }
       ],
-      "next": null
+      "next": null,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "That’s the spirit, apo. One thread at a time.",
-      "next": 7
+      "next": 7,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "Of course. Everyone starts guided.",
-      "next": 7
+      "next": 7,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Come on, at least try one row. I’ll laugh either way, might as well earn it.",
-      "next": 8
+      "next": 8,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "Ay, mayad  gid, apo! Para sa una nga ubra, bukon man maeain!",
       "next": null,
-      "translation": "Oh, that’s good, grandchild! For your first time, not bad at all!"
+      "translation": "Oh, that’s good, grandchild! For your first time, not bad at all!",
+      "type": "dialogue"
     }
   ],
   "scene_3_closing_gift": [
@@ -160,23 +178,27 @@
       "speaker": "Anang Loleng",
       "text": "Hara, batuna, tanda halin sa amon nga komunidad.",
       "next": 2,
-      "translation": "Here, take this. A token from our community."
+      "translation": "Here, take this. A token from our community.",
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "Saeamat gid,  Anang. I’ll keep this.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Anang Loleng",
       "text": "mag dahan ka sa imong pagbiyahe. ag magbalik ka iya, ha, kung may tyempo ka.",
       "next": 4,
-      "translation": "Take care on your journey. And come back here, okay, if you have time."
+      "translation": "Take care on your journey. And come back here, okay, if you have time.",
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Not bad for your first field trip, balikbayan. Two down, more to go.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     }
   ],
   "scene_4_vocabulary_practice_round_verbs_and_pace_words": [
@@ -193,12 +215,14 @@
       "word_ids": [
         "w066",
         "w161"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "These make sense with the actions right in front of us.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
@@ -206,7 +230,8 @@
       "next": 4,
       "word_ids": [
         "w102"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
@@ -218,7 +243,8 @@
         "w173",
         "w073",
         "w210"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "",
@@ -237,22 +263,26 @@
           "next": 7
         }
       ],
-      "next": null
+      "next": null,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Close enough! You’re building sentences now, not just words.",
-      "next": 8
+      "next": 8,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "That’s normal. Meaning first, grammar later.",
-      "next": 8
+      "next": 8,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Deep breath. We’ll circle back to these. No rush.",
-      "next": 9
+      "next": 9,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
@@ -263,7 +293,8 @@
         "w242",
         "w039",
         "w043"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
@@ -272,7 +303,8 @@
       "word_ids": [
         "w049",
         "w078"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
@@ -280,17 +312,20 @@
       "next": 12,
       "word_ids": [
         "w079"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "My head’s kind of full now, but I think I actually get most of it.",
-      "next": 13
+      "next": 13,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "That’s the goal. Not perfect. Just moving forward.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     }
   ],
   "idle_pool_manang_loleng": {

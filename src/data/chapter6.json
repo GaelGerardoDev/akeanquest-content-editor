@@ -10,18 +10,21 @@
       "speaker": "Rose",
       "text": "iya eon kita sa Caticlan. Sunod, sakay kita pa-Boracay.",
       "next": 2,
-      "translation": "We’re here at Caticlan. Next, we ride to Boracay."
+      "translation": "We’re here at Caticlan. Next, we ride to Boracay.",
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "Finally, the famous island.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Papa Jobert",
       "text": "Grabe, kaabo nga turista. Same as before, maybe even more now.",
       "next": null,
-      "translation": "Wow, so many tourists. Same as before, maybe even more now."
+      "translation": "Wow, so many tourists. Same as before, maybe even more now.",
+      "type": "dialogue"
     }
   ],
   "scene_2_arrival_at_boracay_white_beach": [
@@ -35,12 +38,14 @@
       "speaker": "Tita Beth",
       "text": "Mayad-ayad nga agahon, mga bisita! Welcome sa Boracay.",
       "next": 2,
-      "translation": "Good morning, visitors! Welcome to Boracay."
+      "translation": "Good morning, visitors! Welcome to Boracay.",
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "This is my aunt, Tita Beth. She works in tourism here.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Tita Beth",
@@ -49,7 +54,8 @@
       "translation": "You’re here to rest and enjoy the shore.",
       "word_ids": [
         "w053"
-      ]
+      ],
+      "type": "dialogue"
     }
   ],
   "scene_3_tourism_lesson": [
@@ -63,12 +69,14 @@
       "speaker": "Tita Beth",
       "text": "ro turismo iya ro naga-suporta sa komunidad. bukon sa eamang sa negosyo, kundi pati sa trabaho it tanan.",
       "next": 2,
-      "translation": "Tourism here supports the community. Not just business, but jobs for everyone."
+      "translation": "Tourism here supports the community. Not just business, but jobs for everyone.",
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "So every visitor helps the locals too?",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Tita Beth",
@@ -77,7 +85,8 @@
       "translation": "Exactly. When you buy a craft, it’s not just a souvenir — it’s support for the person who made it.",
       "word_ids": [
         "w057"
-      ]
+      ],
+      "type": "dialogue"
     }
   ],
   "scene_4_vocabulary_practice_round_tourism_and_travel": [
@@ -95,7 +104,8 @@
         "w059",
         "w066",
         "w067"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
@@ -105,17 +115,20 @@
         "w073",
         "w078",
         "w079"
-      ]
+      ],
+      "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "Okay, turista is me right now.",
-      "next": 4
+      "next": 4,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Correct. But you’re also balikbayan — returning home.",
-      "next": null
+      "next": null,
+      "type": "dialogue"
     }
   ],
   "scene_5_finale_reflection": [
@@ -129,23 +142,27 @@
       "speaker": "Lola Jonabel",
       "text": "indi ko malipatan do pag warang natun ngara, daya hay paeanumdum sa akong kabuhi .",
       "next": 2,
-      "translation": "I’ll never forget this trip. It feels like a memory of my life."
+      "translation": "I’ll never forget this trip. It feels like a memory of my life.",
+      "type": "dialogue"
     },
     {
       "speaker": "Papa Jobert",
       "text": "Worth every step, Ma.",
-      "next": 3
+      "next": 3,
+      "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "And worth every word you’ve learned, balikbayan.",
-      "next": 4
+      "next": 4,
+      "type": "dialogue"
     },
     {
       "speaker": "Tita Beth",
       "text": "dahan ka sa  pagbalik mo. ag ayaw pag lipati ro Aklan.",
       "next": null,
-      "translation": "Take care on your return. And don’t forget Aklan."
+      "translation": "Take care on your return. And don’t forget Aklan.",
+      "type": "dialogue"
     }
   ],
   "idle_pool_tita_beth": {
