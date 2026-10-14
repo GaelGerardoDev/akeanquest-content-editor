@@ -138,7 +138,11 @@ function App() {
     data: actor,
   }));
   const scriptEntries: LibraryEntry[] = Object.entries(sceneScripts).map(([id, data]) => ({
-    id, label: String((data as { name?: unknown })?.name ?? id), data,
+    id,
+    label: String((!Array.isArray(data) && (data as { name?: unknown })?.name) ?? id),
+    // Some existing scripts are raw action arrays instead of { name, actions } objects.
+    // Normalize only for the block UI; onSave writes them back as arrays.
+    data: Array.isArray(data) ? { name: id, actions: data } : data,
   }));
 
   return <div className="editor-app">
@@ -156,7 +160,7 @@ function App() {
         <Sidebar chapters={chapters} selectedChapterId={selectedChapterId} selectedScene={selectedScene} onChapterChange={(chapterId) => { setSelectedChapterId(chapterId); setSelectedScene(null); }} onSelect={setSelectedScene} onAddScene={handleAddScene} />
         <main className="editor-main"><SceneEditor key={selectedScene ? selectedScene.chapterId + ":" + selectedScene.sceneName : "no-scene"} name={selectedScene?.sceneName ?? "No scene selected"} data={selectedData ?? null} onChange={(updatedData) => { if (!selectedScene) return; setChapters({ ...chapters, [selectedScene.chapterId]: { ...chapters[selectedScene.chapterId], [selectedScene.sceneName]: updatedData } }); }} onSave={handleSave} onArchive={handleArchiveScene} wordBank={wordBank.words} /></main>
       </> : activeTab === "word-bank" ? <main className="editor-main"><WordBankEditor data={wordBank} onChange={setWordBank} /></main>
-      : activeTab === "scene-scripts" ? <main className="editor-main"><BlockSceneScriptEditor entries={scriptEntries} createTemplate={(id) => ({ name: id, actions: [] })} onSave={(id, data) => { setSceneScripts((current) => ({ ...current, [id]: data })); queueAutosave(`scene_scripts/${id}.json`, data); }} onCreate={(id, data) => { setSceneScripts((current) => ({ ...current, [id]: data })); queueAutosave(`scene_scripts/${id}.json`, data); }} onDelete={(id) => { const fileName = `scene_scripts/${id}.json`; if (saveTimers.current[fileName]) { clearTimeout(saveTimers.current[fileName]); delete saveTimers.current[fileName]; } setSceneScripts((current) => { const next = { ...current }; delete next[id]; return next; }); void deleteContentFile(fileName).catch((error) => alert(`Could not delete script file: ${error instanceof Error ? error.message : String(error)}`)); }} /></main>
+      : activeTab === "scene-scripts" ? <main className="editor-main"><BlockSceneScriptEditor entries={scriptEntries} createTemplate={(id) => ({ name: id, actions: [] })} onSave={(id, data) => { const savedData = Array.isArray(sceneScripts[id]) ? ((data as { actions?: unknown })?.actions ?? []) : data; setSceneScripts((current) => ({ ...current, [id]: savedData })); queueAutosave(`scene_scripts/${id}.json`, savedData); }} onCreate={(id, data) => { setSceneScripts((current) => ({ ...current, [id]: data })); queueAutosave(`scene_scripts/${id}.json`, data); }} onDelete={(id) => { const fileName = `scene_scripts/${id}.json`; if (saveTimers.current[fileName]) { clearTimeout(saveTimers.current[fileName]); delete saveTimers.current[fileName]; } setSceneScripts((current) => { const next = { ...current }; delete next[id]; return next; }); void deleteContentFile(fileName).catch((error) => alert(`Could not delete script file: ${error instanceof Error ? error.message : String(error)}`)); }} /></main>
       : <main className="editor-main"><ContentLibraryEditor title="Characters / Actors" noun="actor" description="Manage actor records in actors.json. Keep IDs stable when referenced by scene content." entries={actorEntries} createTemplate={(id) => ({ id, name: id, description: "" })} onSave={(id, data) => { const record = data as Actor; setActors((current) => current.map((actor, index) => String(actor.id ?? actor.actor_id ?? `actor_${index + 1}`) === id ? record : actor)); }} onCreate={(id, data) => setActors((current) => [...current, data as Actor])} onDelete={(id) => setActors((current) => current.filter((actor, index) => String(actor.id ?? actor.actor_id ?? `actor_${index + 1}`) !== id))} /></main>}
     </div>
   </div>;
