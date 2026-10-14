@@ -607,7 +607,7 @@
     {
       "type": "start_router",
       "start_index_if_flag": {
-        "default": 1
+        "default": 0
       }
     }
   ]
