@@ -248,7 +248,8 @@
       "choices": [
         {
           "label": "Deal. Teach me everything, I'm serious about this.",
-          "next": 8
+          "next": 8,
+          "rapport_delta": 2
         },
         {
           "label": "We'll see how it goes. No promises I'll be good at it.",
@@ -614,7 +615,8 @@
       "speaker": "Player",
       "text": "Huh! Is Lola Jonabel still watching TV, I better go check.",
       "next": null,
-      "word_ids": []
+      "word_ids": [],
+      "type": "dialogue"
     }
   ]
 }
