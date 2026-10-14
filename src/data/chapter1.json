@@ -9,7 +9,7 @@
     {
       "speaker": "Lola Jonabel",
       "text": "\\Nahidlaw gid ako sa \\Aklan.",
-      "next": 3,
+      "next": 2,
       "translation": "I really miss Aklan.",
       "word_ids": [
         "w173",
@@ -19,20 +19,14 @@
     },
     {
       "speaker": "Player",
-      "text": "Huh! Is Lola Jonabel still watching TV, I better go check.",
-      "next": 1,
-      "word_ids": []
-    },
-    {
-      "speaker": "Player",
       "text": "Grandma, are you okay? You've been staring at that photo for a while.",
-      "next": 4,
+      "next": 3,
       "type": "dialogue"
     },
     {
       "speaker": "Lola Jonabel",
       "text": "I just want to go back. \\Makauli once more, before... before I get too old to travel.",
-      "next": 5,
+      "next": 4,
       "word_ids": [
         "w147"
       ],
@@ -41,7 +35,7 @@
     {
       "speaker": "Player",
       "text": "Then let's go. Talk to Dad.",
-      "next": 6,
+      "next": 5,
       "type": "dialogue"
     },
     {
@@ -50,16 +44,16 @@
       "choices": [
         {
           "label": "I'll help you plan it, Grandma. We're really going.",
-          "next": 7,
+          "next": 6,
           "rapport_delta": 2
         },
         {
           "label": "I don't really know much about Aklan, but fine, let's try.",
-          "next": 8
+          "next": 7
         },
         {
           "label": "Isn't that too far? You might have a hard time, Grandma.",
-          "next": 9,
+          "next": 8,
           "rapport_delta": -2
         }
       ],
@@ -70,7 +64,7 @@
     {
       "speaker": "Lola Jonabel",
       "text": "\\Saeamat, \\Apo. This old heart needed to hear that.",
-      "next": 10,
+      "next": 9,
       "set_flag_on_enter": "warm_toward_lola",
       "word_ids": [
         "w206",
@@ -81,13 +75,13 @@
     {
       "speaker": "Lola Jonabel",
       "text": "That's alright. You'll learn — the language will teach you where you're from.",
-      "next": 10,
+      "next": 9,
       "type": "dialogue"
     },
     {
       "speaker": "Lola Jonabel",
       "text": "Maybe. But some things are worth being tired for.",
-      "next": 10,
+      "next": 9,
       "word_ids": [
         "w084"
       ],
@@ -96,7 +90,7 @@
     {
       "speaker": "Lola Jonabel",
       "text": "I'll tell your father about our plan",
-      "next": 11,
+      "next": 10,
       "word_ids": [],
       "type": "dialogue"
     },
