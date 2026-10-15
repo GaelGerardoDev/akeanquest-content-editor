@@ -510,12 +510,9 @@
           "correct_answer": ""
         }
       ],
-      "choices": [
-        "w084",
-        "w011",
-        "w246"
-      ],
-      "next": 6
+      "choices": [],
+      "next": 6,
+      "quiz_type": "dynamic"
     },
     {
       "speaker": "Rose",
