@@ -37,7 +37,12 @@ export type QuizNode = {
   quiz_type?: "manual" | "dynamic";
   questions: QuizQuestion[];
   choices: string[];
-  next: number | null;
+  /** Destination when the learner answers the quiz correctly. */
+  success?: number | null;
+  /** Destination when the learner answers the quiz incorrectly. */
+  failure?: number | null;
+  /** Legacy single-output field; used as success when success is absent. */
+  next?: number | null;
   /** Dynamic question templates; each supports [word] and [gloss] placeholders. */
   question_templates?: string[];
   /** Per-template answer display mode, aligned by index with question_templates. */
