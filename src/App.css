@@ -1411,3 +1411,9 @@ button,input,textarea,select{font-family:inherit}
 
 .quiz-question-card{display:flex;flex-direction:column;gap:9px;padding:12px;margin:10px 0;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface-soft)}
 .quiz-question-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}
+
+
+/* Minigame trigger nodes use a distinct amber-orange palette. */
+.scene-graph-node.type-minigame{border-color:#d97706;background:linear-gradient(180deg,#4a3425,#30333a)}
+.scene-graph-node.type-minigame .scene-graph-node-type{color:#fbbf24}
+.scene-graph-node.type-minigame.selected{border-color:#fbbf24}
