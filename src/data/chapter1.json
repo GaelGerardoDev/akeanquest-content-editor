@@ -518,6 +518,10 @@
       "question_template": "What does \"[word]\" mean?",
       "word_pool": [
         "w001"
+      ],
+      "question_templates": [
+        "What does \"[word]\" mean?",
+        "What Akeanon word means [gloss]?"
       ]
     },
     {
