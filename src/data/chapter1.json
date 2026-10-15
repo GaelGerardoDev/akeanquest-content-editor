@@ -440,7 +440,8 @@
       "translation": "Ahh, You must be [Player]",
       "type": "dialogue",
       "word_ids": [
-        "w246"
+        "w246",
+        "w247"
       ]
     },
     {
