@@ -135,9 +135,10 @@
     },
     {
       "speaker": "Papa Jobert",
-      "text": "Wow, this place doesn't change. Same humidity as I remember, huh, Ma.",
+      "text": " Same humidity as I remember, huh, Ma.",
       "next": 3,
-      "type": "dialogue"
+      "type": "dialogue",
+      "word_ids": []
     },
     {
       "speaker": "Lola Jonabel",
