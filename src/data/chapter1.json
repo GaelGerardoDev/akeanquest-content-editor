@@ -129,13 +129,19 @@
     {
       "speaker": "Papa Jobert",
       "text": "Wow, this place doesn't change. Same humidity as I remember, huh, Ma.",
-      "next": 2,
+      "next": 3,
+      "type": "dialogue"
+    },
+    {
+      "speaker": "Papa Jobert",
+      "text": "Wow, this place doesn't change. Same humidity as I remember, huh, Ma.",
+      "next": 3,
       "type": "dialogue"
     },
     {
       "speaker": "Lola Jonabel",
       "text": "\\Mayad \\nga \\agahon Aklan.",
-      "next": 3,
+      "next": 4,
       "translation": "Good morning in Aklan.",
       "word_ids": [
         "w163",
@@ -147,13 +153,13 @@
     {
       "speaker": "Player",
       "text": "Grandma, teach me that. I want to say it right when we meet Aunt Susan.",
-      "next": 4,
+      "next": 5,
       "type": "dialogue"
     },
     {
       "speaker": "Lola Jonabel",
       "text": "Just follow along. mayad nga agahon.",
-      "next": 5,
+      "next": 6,
       "type": "dialogue"
     },
     {
@@ -171,13 +177,13 @@
         "agahon"
       ],
       "next": 6,
-      "success": 6,
-      "failure": 7
+      "success": 7,
+      "failure": 8
     },
     {
       "speaker": "Lola Jonabel",
       "text": "Well done \\apo.",
-      "next": 8,
+      "next": 9,
       "type": "dialogue",
       "word_ids": [
         "w019"
@@ -186,7 +192,7 @@
     {
       "speaker": "Lola Jonabel",
       "text": "Practice makes it stick. We have time. ",
-      "next": 9,
+      "next": 10,
       "type": "dialogue",
       "word_ids": []
     },
@@ -199,17 +205,17 @@
     {
       "speaker": "Lola Jonabel",
       "text": "Do you want to try again?",
-      "next": 8,
+      "next": 9,
       "word_ids": [],
       "type": "dialogue",
       "choices": [
         {
           "label": "Yes",
-          "next": 8
+          "next": 9
         },
         {
           "label": "No",
-          "next": 8
+          "next": 9
         }
       ]
     }
