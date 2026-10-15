@@ -299,6 +299,23 @@ function autoLayout(scene: Scene): Record<string, Point> {
     row.set(visual.id, fallbackRow++);
   });
 
+  // Resolve row collisions within each column. Different branches can
+  // independently choose the same preferred row, especially when they
+  // converge or have different depths. Keep the preferred row whenever it
+  // is free; otherwise move the visual down until its row is unoccupied.
+  const occupiedRowsByColumn = new Map<number, Set<number>>();
+  visuals(scene).forEach((visual) => {
+    const visualColumn = column.get(visual.id) ?? 0;
+    const occupied = occupiedRowsByColumn.get(visualColumn) ?? new Set<number>();
+    let visualRow = row.get(visual.id) ?? 0;
+
+    while (occupied.has(visualRow)) visualRow += 1;
+
+    occupied.add(visualRow);
+    occupiedRowsByColumn.set(visualColumn, occupied);
+    row.set(visual.id, visualRow);
+  });
+
   visuals(scene).forEach((visual) => {
     positions[visual.id] = {
       x: START_X + (column.get(visual.id) ?? 0) * STEP_X,
