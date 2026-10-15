@@ -33,9 +33,17 @@ export type QuizQuestion = {
 
 export type QuizNode = {
   type: "quiz";
+  /** Missing values are treated as manual for backward compatibility. */
+  quiz_type?: "manual" | "dynamic";
   questions: QuizQuestion[];
   choices: string[];
   next: number | null;
+  /** Dynamic question template; supports [word] and [gloss] placeholders. */
+  question_template?: string;
+  /** Whether answer choices display the Akeanon word or its gloss. */
+  choice_display?: "word" | "gloss";
+  /** Word IDs eligible to generate dynamic questions and answer choices. */
+  word_pool?: string[];
 };
 
 export type StartRouter = {
