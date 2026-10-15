@@ -475,9 +475,7 @@
       "speaker": "Rose",
       "text": "Ako — that's I. Ikaw — you. Siya — he or she.",
       "next": 3,
-      "word_ids": [
-        "w092"
-      ],
+      "word_ids": [],
       "type": "dialogue"
     },
     {
