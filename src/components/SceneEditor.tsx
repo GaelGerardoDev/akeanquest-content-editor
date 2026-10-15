@@ -929,7 +929,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     onChange(next);
   }
 
-  function addPhraseBuilder(index: number) { if (!sceneData) return; const insert=index+1; const shift=(v:number|null)=>v!==null&&v>=insert?v+1:v; const next=sceneData.map((node):Scene[number]=>isDialogueNode(node)?{...node,next:shift(node.next),choices:node.choices?.map(c=>({...c,next:shift(c.next)}))}:isPhraseBuilderNode(node)?{...node,success:shift(node.success),failure:shift(node.failure)}:isQuizNode(node)?{...node,next:shift(node.next)}:node); next.splice(insert,0,{type:"phrase_builder",prompt:"",choices:[],answer:[],success:null,failure:null}); next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; }); onChange(next); setSelected({kind:"scene",sceneIndex:insert}); }
+  function addPhraseBuilder(index: number) { if (!sceneData) return; const insert=index+1; const shift=(v:number|null)=>v!==null&&v>=insert?v+1:v; const next=sceneData.map((node):Scene[number]=>isDialogueNode(node)?{...node,next:shift(node.next),choices:node.choices?.map(c=>({...c,next:shift(c.next)}))}:isPhraseBuilderNode(node)?{...node,success:shift(node.success),failure:shift(node.failure)}:isQuizNode(node)?{...node,success:shift(quizSuccess(node)),failure:shift(quizFailure(node)),next:undefined}:node); next.splice(insert,0,{type:"phrase_builder",prompt:"",choices:[],answer:[],success:null,failure:null}); next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; }); onChange(next); setSelected({kind:"scene",sceneIndex:insert}); }
 
   function addNode(index: number) {
     if (!sceneData) return;
