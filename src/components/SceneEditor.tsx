@@ -577,14 +577,20 @@ function SceneInspector({
     const questionTemplates = node.question_templates?.length
       ? node.question_templates
       : [node.question_template ?? "What does [word] mean?"];
-    const displayMode = node.choice_display ?? "gloss";
+    const templateDisplayModes = questionTemplates.map((_, index) => node.question_template_choice_displays?.[index] ?? node.choice_display ?? "gloss");
     const renderTemplate = (template: string, word: WordBankEntry) => template
       .replace(/\[word\]/gi, word.akeanon)
       .replace(/\[gloss\]/gi, word.gloss || "(missing gloss)");
     const updateQuestionTemplates = (question_templates: string[]) => updateQuiz({
       question_templates,
       question_template: question_templates[0] ?? "",
+      question_template_choice_displays: question_templates.map((_, index) => node.question_template_choice_displays?.[index] ?? node.choice_display ?? "gloss"),
     });
+    const updateTemplateDisplayMode = (index: number, mode: "word" | "gloss") => {
+      const modes = questionTemplates.map((_, i) => templateDisplayModes[i] ?? "gloss");
+      modes[index] = mode;
+      updateQuiz({ question_template_choice_displays: modes, choice_display: modes[0] ?? "gloss" });
+    };
     return <aside className="scene-inspector">
       <div className="scene-inspector-header"><span>QUIZ</span><strong>Node #{selected.sceneIndex}</strong><small>{quizType === "dynamic" ? dynamicWords.length * questionTemplates.length : node.questions.length} possible question{(quizType === "dynamic" ? dynamicWords.length * questionTemplates.length : node.questions.length) === 1 ? "" : "s"}</small></div>
       <div className="scene-inspector-body">
@@ -607,20 +613,26 @@ function SceneInspector({
             {questionTemplates.map((template, index) => <div className="quiz-question-card" key={index}>
               <div className="quiz-question-heading"><strong>Template {index + 1}</strong>{questionTemplates.length > 1 && <button type="button" className="danger" onClick={() => updateQuestionTemplates(questionTemplates.filter((_, i) => i !== index))}>Remove</button>}</div>
               <Field label="Template"><textarea rows={2} value={template} onChange={(e) => updateQuestionTemplates(questionTemplates.map((item, i) => i === index ? e.target.value : item))} placeholder="What does [word] mean?" /></Field>
+              <Field label="Choices Display"><select value={templateDisplayModes[index] ?? "gloss"} onChange={(e) => updateTemplateDisplayMode(index, e.target.value as "word" | "gloss")}><option value="word">[word] — Akeanon word</option><option value="gloss">[gloss] — Meaning</option></select></Field>
             </div>)}
             <button type="button" onClick={() => updateQuestionTemplates([...questionTemplates, "What Akeanon word means [gloss]?"])}>+ Add Template</button>
           </div>
-          <Field label="Choices Display"><select value={displayMode} onChange={(e) => updateQuiz({ choice_display: e.target.value as "word" | "gloss" })}><option value="word">[word] — Akeanon word</option><option value="gloss">[gloss] — Meaning</option></select></Field>
+          
           <Field label="Word Pool"><WordIdPicker value={node.word_pool ?? []} onChange={(word_pool) => updateQuiz({ word_pool })} wordBank={wordBank} /><small>Each selected word generates one question. The selected pool also supplies the answer choices.</small></Field>
           <div className="scene-inspector-section"><div className="scene-inspector-section-title">Generated Questions Preview</div>
-            {dynamicWords.length ? questionTemplates.flatMap((template, templateIndex) => dynamicWords.map((word) => <div className="quiz-question-card" key={templateIndex + "-" + word.id}>
-              <small>Template {templateIndex + 1} · {word.akeanon}</small>
-              <strong>{renderTemplate(template, word)}</strong>
-              <small>Correct answer: {displayMode === "word" ? word.akeanon : word.gloss || "(missing gloss)"}</small>
-              <div className="phrase-choice-list">{dynamicWords.map((choice) => <span className="word-id-chip" key={choice.id}><span>{displayMode === "word" ? choice.akeanon : choice.gloss || "(missing gloss)"}</span></span>)}</div>
-            </div>)) : <small>Select one or more words to preview the generated questions.</small>}
+            {dynamicWords.length ? questionTemplates.map((template, templateIndex) => {
+              const word = dynamicWords[0];
+              const displayMode = templateDisplayModes[templateIndex] ?? "gloss";
+              return <div className="quiz-question-card" key={templateIndex}>
+                <small>Template {templateIndex + 1} · Example word: {word.akeanon}</small>
+                <strong>{renderTemplate(template, word)}</strong>
+                <small>Correct answer: {displayMode === "word" ? word.akeanon : word.gloss || "(missing gloss)"}</small>
+                <small>Answer choices:</small>
+                <div className="phrase-choice-list">{dynamicWords.map((choice) => <span className="word-id-chip" key={choice.id}><span style={{ whiteSpace: "normal", overflowWrap: "anywhere" }}>{displayMode === "word" ? choice.akeanon : choice.gloss || "(missing gloss)"}</span></span>)}</div>
+              </div>;
+            }) : <small>Select one or more words to preview the generated questions.</small>}
           </div>
-          <Field label="Choices Pool"><div className="phrase-choice-list">{choices.map((id) => { const word = wordBank.find((entry) => entry.id === id); return <span className="word-id-chip" key={id}><span>{word ? (displayMode === "word" ? word.akeanon : word.gloss || "(missing gloss)") : "Unknown word"}</span><code>{id}</code></span>; })}</div><small>Dynamic choices come only from the selected Word Pool.</small></Field>
+          <Field label="Choices Pool"><div className="phrase-choice-list">{choices.map((id) => { const word = wordBank.find((entry) => entry.id === id); return <span className="word-id-chip" key={id}><span style={{ whiteSpace: "normal", overflowWrap: "anywhere" }}>{word ? word.akeanon : "Unknown word"}</span><code>{id}</code></span>; })}</div><small>Dynamic choices come only from the selected Word Pool.</small></Field>
         </>}
         <Field label="Next"><select value={node.next ?? ""} onChange={(e) => onChange(selected.sceneIndex, { ...node, next: e.target.value === "" ? null : Number(e.target.value), choices })}><option value="">End</option>{scene.map((_, i) => <option key={i} value={i}>Node #{i} — {title(scene[i], i)}</option>)}</select></Field>
         <div className="scene-inspector-actions"><button type="button" onClick={() => onAdd(selected.sceneIndex)}>+ Dialogue Node</button><button type="button" onClick={() => onAddPhraseBuilder(selected.sceneIndex)}>+ Phrase Builder</button><button type="button" className="danger" onClick={() => onDelete(selected.sceneIndex)}>Delete</button></div>
