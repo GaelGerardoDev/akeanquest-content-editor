@@ -293,15 +293,14 @@ function autoLayout(scene: Scene): Record<string, Point> {
   return positions;
 }
 
-function quizChoicePool(scene: Scene, quizIndex: number, wordBank: WordBankEntry[]): string[] {
+function quizChoicePool(scene: Scene, quizIndex: number): string[] {
   const introduced = scene.slice(0, quizIndex).flatMap((node) => {
-    if (isDialogueNode(node)) return (node.word_ids ?? []).map((id) => wordBank.find((word) => word.id === id)?.akeanon ?? "");
-    if (isPhraseBuilderNode(node)) return node.answer;
+    if (isDialogueNode(node)) return node.word_ids ?? [];
     return [];
   });
   const quiz = scene[quizIndex];
   const answers = isQuizNode(quiz) ? quiz.questions.map((question) => question.correct_answer) : [];
-  return [...new Set([...answers, ...introduced].map((word) => word.trim()).filter(Boolean))];
+  return [...new Set([...answers, ...introduced].map((id) => id.trim()).filter(Boolean))];
 }
 
 type WordBankEntry = WordBankReferenceEntry & {
@@ -546,7 +545,7 @@ function SceneInspector({
     if (type === "quiz") {
       const next = isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : isStartRouter(node) ? node.start_index_if_flag.default ?? null : node.next;
       const quiz: QuizNode = { type: "quiz", questions: [], choices: [], next };
-      quiz.choices = quizChoicePool(scene.map((item, i) => i === selected.sceneIndex ? quiz : item), selected.sceneIndex, wordBank);
+      quiz.choices = quizChoicePool(scene.map((item, i) => i === selected.sceneIndex ? quiz : item), selected.sceneIndex);
       onChange(selected.sceneIndex, quiz);
       return;
     }
@@ -562,10 +561,10 @@ function SceneInspector({
   };
 
   if (isQuizNode(node)) {
-    const choices = quizChoicePool(scene, selected.sceneIndex, wordBank);
+    const choices = quizChoicePool(scene, selected.sceneIndex);
     const updateQuestions = (questions: QuizNode["questions"]) => {
       const nextScene = scene.map((item, index) => index === selected.sceneIndex ? { ...node, questions } : item);
-      const updated = { ...node, questions, choices: quizChoicePool(nextScene, selected.sceneIndex, wordBank) };
+      const updated = { ...node, questions, choices: quizChoicePool(nextScene, selected.sceneIndex) };
       onChange(selected.sceneIndex, updated);
     };
     const updateQuestion = (index: number, patch: Partial<QuizNode["questions"][number]>) => updateQuestions(node.questions.map((question, i) => i === index ? { ...question, ...patch } : question));
@@ -577,11 +576,11 @@ function SceneInspector({
           {node.questions.map((question, index) => <div className="quiz-question-card" key={index}>
             <div className="quiz-question-heading"><strong>Question {index + 1}</strong><button type="button" className="danger" onClick={() => updateQuestions(node.questions.filter((_, i) => i !== index))}>Remove</button></div>
             <Field label="Question"><textarea rows={3} value={question.question} onChange={(e) => updateQuestion(index, { question: e.target.value })} placeholder="Enter the question…" /></Field>
-            <Field label="Correct Answer"><input value={question.correct_answer} onChange={(e) => updateQuestion(index, { correct_answer: e.target.value })} placeholder="Correct answer word or phrase" /></Field>
+            <Field label="Correct Answer (Word ID)"><WordIdPicker value={question.correct_answer ? [question.correct_answer] : []} onChange={(wordIds) => updateQuestion(index, { correct_answer: wordIds[wordIds.length - 1] ?? "" })} wordBank={wordBank} /></Field>
           </div>)}
           <button type="button" onClick={() => updateQuestions([...node.questions, { question: "", correct_answer: "" }])}>+ Add Question</button>
         </div>
-        <Field label="Choices Pool"><div className="phrase-choice-list">{choices.map((word, index) => <span className="word-id-chip" key={word + index}><span>{word}</span></span>)}</div><small>Unique correct answers plus words introduced before this quiz in the chapter. Later words are excluded.</small></Field>
+        <Field label="Choices Pool"><div className="phrase-choice-list">{choices.map((id, index) => { const word = wordBank.find((entry) => entry.id === id); return <span className="word-id-chip" key={id + index}><span>{word?.akeanon ?? "Unknown word"}</span><code>{id}</code></span>; })}</div><small>Unique correct-answer word IDs plus word IDs referenced by earlier dialogue nodes in this chapter. Later words are excluded.</small></Field>
         <Field label="Next"><select value={node.next ?? ""} onChange={(e) => onChange(selected.sceneIndex, { ...node, next: e.target.value === "" ? null : Number(e.target.value), choices })}><option value="">End</option>{scene.map((_, i) => <option key={i} value={i}>Node #{i} — {title(scene[i], i)}</option>)}</select></Field>
         <div className="scene-inspector-actions"><button type="button" onClick={() => onAdd(selected.sceneIndex)}>+ Dialogue Node</button><button type="button" onClick={() => onAddPhraseBuilder(selected.sceneIndex)}>+ Phrase Builder</button><button type="button" className="danger" onClick={() => onDelete(selected.sceneIndex)}>Delete</button></div>
       </div>
@@ -858,7 +857,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     if (!sceneData) return;
     const next = [...sceneData];
     next[index] = node;
-    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; });
+    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
   }
 
@@ -868,7 +867,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     onChange(next);
   }
 
-  function addPhraseBuilder(index: number) { if (!sceneData) return; const insert=index+1; const shift=(v:number|null)=>v!==null&&v>=insert?v+1:v; const next=sceneData.map((node):Scene[number]=>isDialogueNode(node)?{...node,next:shift(node.next),choices:node.choices?.map(c=>({...c,next:shift(c.next)}))}:isPhraseBuilderNode(node)?{...node,success:shift(node.success),failure:shift(node.failure)}:isQuizNode(node)?{...node,next:shift(node.next)}:node); next.splice(insert,0,{type:"phrase_builder",prompt:"",choices:[],answer:[],success:null,failure:null}); next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; }); onChange(next); setSelected({kind:"scene",sceneIndex:insert}); }
+  function addPhraseBuilder(index: number) { if (!sceneData) return; const insert=index+1; const shift=(v:number|null)=>v!==null&&v>=insert?v+1:v; const next=sceneData.map((node):Scene[number]=>isDialogueNode(node)?{...node,next:shift(node.next),choices:node.choices?.map(c=>({...c,next:shift(c.next)}))}:isPhraseBuilderNode(node)?{...node,success:shift(node.success),failure:shift(node.failure)}:isQuizNode(node)?{...node,next:shift(node.next)}:node); next.splice(insert,0,{type:"phrase_builder",prompt:"",choices:[],answer:[],success:null,failure:null}); next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; }); onChange(next); setSelected({kind:"scene",sceneIndex:insert}); }
 
   function addNode(index: number) {
     if (!sceneData) return;
@@ -876,7 +875,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
     const next = sceneData.map((node): Scene[number] => isDialogueNode(node) ? { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure) } : isQuizNode(node) ? { ...node, next: shift(node.next) } : node);
     next.splice(insert, 0, { speaker: "", text: "", next: null, word_ids: [] });
-    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; });
+    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
     setSelected({ kind: "scene", sceneIndex: insert });
   }
@@ -889,7 +888,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
     const next = sceneData.map((item): Scene[number] => isDialogueNode(item) ? { ...item, next: shift(item.next), choices: item.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(item) ? { ...item, success: shift(item.success), failure: shift(item.failure) } : isQuizNode(item) ? { ...item, next: shift(item.next) } : item);
     next.splice(insert, 0, isQuizNode(node) ? { ...node, next: shift(node.next), questions: node.questions.map((q) => ({ ...q })), choices: [...node.choices] } : { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) });
-    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; });
+    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
     setSelected({ kind: "scene", sceneIndex: insert });
   }
@@ -903,7 +902,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
       if (!isDialogueNode(node)) return node;
       return { ...node, next: fix(node.next), choices: node.choices?.map((c) => ({ ...c, next: fix(c.next) })) };
     });
-    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; });
+    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
     setSelected(index > 0 ? { kind: "scene", sceneIndex: index - 1 } : next.length ? { kind: "scene", sceneIndex: 0 } : null);
   }
