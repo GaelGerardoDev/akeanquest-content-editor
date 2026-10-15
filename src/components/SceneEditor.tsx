@@ -299,21 +299,37 @@ function autoLayout(scene: Scene): Record<string, Point> {
     row.set(visual.id, fallbackRow++);
   });
 
-  // Resolve row collisions within each column. Different branches can
-  // independently choose the same preferred row, especially when they
-  // converge or have different depths. Keep the preferred row whenever it
-  // is free; otherwise move the visual down until its row is unoccupied.
+  // Resolve row collisions by moving the entire downstream branch, not
+  // just the colliding node. This keeps the branch visually together while
+  // preserving the relative row spacing of its descendants.
+  const shiftBranchDown = (branchRoot: string, delta: number) => {
+    const pending = [branchRoot];
+    const visited = new Set<string>();
+
+    while (pending.length) {
+      const id = pending.shift()!;
+      if (visited.has(id)) continue;
+      visited.add(id);
+      row.set(id, (row.get(id) ?? 0) + delta);
+      (outgoingById.get(id) ?? []).forEach((child) => pending.push(child));
+    }
+  };
+
   const occupiedRowsByColumn = new Map<number, Set<number>>();
   visuals(scene).forEach((visual) => {
     const visualColumn = column.get(visual.id) ?? 0;
     const occupied = occupiedRowsByColumn.get(visualColumn) ?? new Set<number>();
-    let visualRow = row.get(visual.id) ?? 0;
+    const visualRow = row.get(visual.id) ?? 0;
 
-    while (occupied.has(visualRow)) visualRow += 1;
+    if (occupied.has(visualRow)) {
+      let nextFreeRow = visualRow;
+      while (occupied.has(nextFreeRow)) nextFreeRow += 1;
+      shiftBranchDown(visual.id, nextFreeRow - visualRow);
+    }
 
-    occupied.add(visualRow);
+    const finalRow = row.get(visual.id) ?? visualRow;
+    occupied.add(finalRow);
     occupiedRowsByColumn.set(visualColumn, occupied);
-    row.set(visual.id, visualRow);
   });
 
   visuals(scene).forEach((visual) => {
