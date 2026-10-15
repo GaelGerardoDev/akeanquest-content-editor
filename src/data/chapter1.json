@@ -155,13 +155,19 @@
     {
       "speaker": "Player",
       "text": "Grandma, teach me that. I want to say it right when we meet Aunt Susan.",
-      "next": 5,
+      "next": 6,
+      "type": "dialogue"
+    },
+    {
+      "speaker": "Player",
+      "text": "Grandma, teach me that. I want to say it right when we meet Aunt Susan.",
+      "next": 6,
       "type": "dialogue"
     },
     {
       "speaker": "Lola Jonabel",
       "text": "Just follow along. mayad nga agahon.",
-      "next": 6,
+      "next": 7,
       "type": "dialogue"
     },
     {
@@ -179,13 +185,13 @@
         "agahon"
       ],
       "next": 6,
-      "success": 7,
-      "failure": 8
+      "success": 8,
+      "failure": 9
     },
     {
       "speaker": "Lola Jonabel",
       "text": "Well done \\apo.",
-      "next": 9,
+      "next": 10,
       "type": "dialogue",
       "word_ids": [
         "w019"
@@ -194,7 +200,7 @@
     {
       "speaker": "Lola Jonabel",
       "text": "Practice makes it stick. We have time. ",
-      "next": 10,
+      "next": 11,
       "type": "dialogue",
       "word_ids": []
     },
@@ -207,17 +213,17 @@
     {
       "speaker": "Lola Jonabel",
       "text": "Do you want to try again?",
-      "next": 9,
+      "next": 10,
       "word_ids": [],
       "type": "dialogue",
       "choices": [
         {
           "label": "Yes",
-          "next": 9
+          "next": 10
         },
         {
           "label": "No",
-          "next": 9
+          "next": 10
         }
       ]
     }
