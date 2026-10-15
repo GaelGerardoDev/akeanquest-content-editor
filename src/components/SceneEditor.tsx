@@ -976,9 +976,14 @@ function SceneMap({ scene, selected, onSelect }: { scene: Scene; selected: Selec
               const y1 = from.y + fromHeight / 2;
               const x2 = to.x;
               const y2 = to.y + (toVisual.kind === "choice" ? choiceHeight(scene[toVisual.sceneIndex].choices![toVisual.choiceIndex!]) : nodeHeight(scene[toVisual.sceneIndex])) / 2;
-              const routeX = x2 > x1 ? x1 + Math.min(28, Math.max(8, (x2 - x1) / 2)) : x1 + 28;
-              const laneY = Math.min(y1, y2) - 30 - i * 3;
-              const d = x2 > x1 ? `M ${x1} ${y1} L ${routeX} ${y1} L ${routeX} ${y2} L ${x2} ${y2}` : `M ${x1} ${y1} L ${x1 + 24} ${y1} L ${x1 + 24} ${laneY} L ${x2 - 24} ${laneY} L ${x2 - 24} ${y2} L ${x2} ${y2}`;
+              const routeX = x1 + Math.min(28, Math.max(8, (x2 - x1) / 2));
+              const laneY = Math.min(...Object.values(display).map((point) => point.y), 0) - 40 - i * 3;
+              const spansColumns = x2 > x1 + fromWidth + 80;
+              const d = spansColumns
+                ? `M ${x1} ${y1} L ${x1 + 24} ${y1} L ${x1 + 24} ${laneY} L ${x2 - 24} ${laneY} L ${x2 - 24} ${y2} L ${x2} ${y2}`
+                : x2 > x1
+                  ? `M ${x1} ${y1} L ${routeX} ${y1} L ${routeX} ${y2} L ${x2} ${y2}`
+                  : `M ${x1} ${y1} L ${x1 + 24} ${y1} L ${x1 + 24} ${laneY} L ${x2 - 24} ${laneY} L ${x2 - 24} ${y2} L ${x2} ${y2}`;
               return <path key={i} className={`scene-graph-edge ${edge.choice ? "choice" : ""} ${edge.route === "flag" ? "flag-route" : ""}`} d={d} />;
             })}
           </svg>
