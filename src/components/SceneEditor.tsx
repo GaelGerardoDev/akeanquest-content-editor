@@ -175,7 +175,7 @@ function autoLayout(scene: Scene): Record<string, Point> {
     if (!isDialogueNode(node)) return [];
 
     if (node.choices?.length) {
-      return node.choices.map((_, choiceIndex) => choiceId(sceneIndex, choiceIndex));
+      return [...node.choices.map((_, choiceIndex) => choiceId(sceneIndex, choiceIndex)), ...(flagCheckDestination(node) !== null && scene[flagCheckDestination(node)!] ? [sceneId(flagCheckDestination(node)!)] : [])];
     }
 
     return node.next !== null && scene[node.next]
@@ -1025,7 +1025,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     if (!sceneData) return;
     const insert = index + 1;
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
-    const next = sceneData.map((node): Scene[number] => isDialogueNode(node) ? { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(node) || isMinigameTriggerNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure) } : isQuizNode(node) ? { ...node, success: shift(quizSuccess(node)), failure: shift(quizFailure(node)), next: undefined } : node);
+    const next = sceneData.map((node): Scene[number] => isDialogueNode(node) ? { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })), check_flag_next: node.check_flag_next == null ? node.check_flag_next : shift(node.check_flag_next) } : isPhraseBuilderNode(node) || isMinigameTriggerNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure), check_flag_next: node.check_flag_next == null ? node.check_flag_next : shift(node.check_flag_next) } : isQuizNode(node) ? { ...node, success: shift(quizSuccess(node)), failure: shift(quizFailure(node)), next: undefined, check_flag_next: node.check_flag_next == null ? node.check_flag_next : shift(node.check_flag_next) } : node);
     next.splice(insert, 0, { speaker: "", text: "", next: null, word_ids: [] });
     next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
@@ -1038,8 +1038,8 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     if (!isDialogueNode(node) && !isQuizNode(node) && !isMinigameTriggerNode(node)) return;
     const insert = index + 1;
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
-    const next = sceneData.map((item): Scene[number] => isDialogueNode(item) ? { ...item, next: shift(item.next), choices: item.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(item) || isMinigameTriggerNode(item) ? { ...item, success: shift(item.success), failure: shift(item.failure) } : isQuizNode(item) ? { ...item, success: shift(quizSuccess(item)), failure: shift(quizFailure(item)), next: undefined } : item);
-    next.splice(insert, 0, isQuizNode(node) ? { ...node, success: shift(quizSuccess(node)), failure: shift(quizFailure(node)), next: undefined, questions: node.questions.map((q) => ({ ...q })), choices: [...node.choices] } : isMinigameTriggerNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure) } : { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) });
+    const next = sceneData.map((item): Scene[number] => isDialogueNode(item) ? { ...item, next: shift(item.next), choices: item.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(item) || isMinigameTriggerNode(item) ? { ...item, success: shift(item.success), failure: shift(item.failure) } : isQuizNode(item) ? { ...item, success: shift(quizSuccess(item)), failure: shift(quizFailure(item)), next: undefined, check_flag_next: item.check_flag_next == null ? item.check_flag_next : shift(item.check_flag_next) } : item);
+    next.splice(insert, 0, isQuizNode(node) ? { ...node, success: shift(quizSuccess(node)), failure: shift(quizFailure(node)), next: undefined, questions: node.questions.map((q) => ({ ...q })), choices: [...node.choices] } : isMinigameTriggerNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure), check_flag_next: node.check_flag_next == null ? node.check_flag_next : shift(node.check_flag_next) } : { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })), check_flag_next: node.check_flag_next == null ? node.check_flag_next : shift(node.check_flag_next) });
     next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
     setSelected({ kind: "scene", sceneIndex: insert });
@@ -1049,10 +1049,10 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     if (!sceneData || (!isDialogueNode(sceneData[index]) && !isPhraseBuilderNode(sceneData[index]) && !isQuizNode(sceneData[index]) && !isMinigameTriggerNode(sceneData[index]))) return;
     const next = sceneData.filter((_, i) => i !== index).map((node): Scene[number] => {
       const fix = (v: number | null) => v === index ? null : v !== null && v > index ? v - 1 : v;
-      if (isPhraseBuilderNode(node) || isMinigameTriggerNode(node)) return { ...node, success: fix(node.success), failure: fix(node.failure) };
-      if (isQuizNode(node)) return { ...node, success: fix(quizSuccess(node)), failure: fix(quizFailure(node)), next: undefined };
+      if (isPhraseBuilderNode(node) || isMinigameTriggerNode(node)) return { ...node, success: fix(node.success), failure: fix(node.failure), check_flag_next: node.check_flag_next == null ? node.check_flag_next : fix(node.check_flag_next) };
+      if (isQuizNode(node)) return { ...node, success: fix(quizSuccess(node)), failure: fix(quizFailure(node)), next: undefined, check_flag_next: node.check_flag_next == null ? node.check_flag_next : fix(node.check_flag_next) };
       if (!isDialogueNode(node)) return node;
-      return { ...node, next: fix(node.next), choices: node.choices?.map((c) => ({ ...c, next: fix(c.next) })) };
+      return { ...node, next: fix(node.next), choices: node.choices?.map((c) => ({ ...c, next: fix(c.next) })), check_flag_next: node.check_flag_next == null ? node.check_flag_next : fix(node.check_flag_next) };
     });
     next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
