@@ -474,27 +474,34 @@
     {
       "speaker": "Rose",
       "text": "Ako — that's I. Ikaw — you. Siya — he or she.",
-      "next": 4,
+      "next": 3,
       "word_ids": [],
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Ako — that's I. Ikaw — you. Siya — he or she.",
-      "next": 4,
+      "next": 5,
+      "word_ids": [],
+      "type": "dialogue"
+    },
+    {
+      "speaker": "Rose",
+      "text": "Ako — that's I. Ikaw — you. Siya — he or she.",
+      "next": 5,
       "word_ids": [],
       "type": "dialogue"
     },
     {
       "speaker": "Player",
       "text": "Okay, ako... ikaw... siya. Got it, I think.",
-      "next": 5,
+      "next": 6,
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Kami — we, but not you. Kita — we, and that includes you. Kamo — you all. Sanda — they.",
-      "next": 6,
+      "next": 7,
       "word_ids": [
         "w104"
       ],
@@ -506,15 +513,15 @@
       "choices": [
         {
           "label": "Yes, keep going. I want to actually remember these.",
-          "next": 7
-        },
-        {
-          "label": "Give me a second, it's already too many at once.",
           "next": 8
         },
         {
-          "label": "Can we save the rest for later, Rose? My brain hurts.",
+          "label": "Give me a second, it's already too many at once.",
           "next": 9
+        },
+        {
+          "label": "Can we save the rest for later, Rose? My brain hurts.",
+          "next": 10
         }
       ],
       "next": null,
@@ -523,25 +530,25 @@
     {
       "speaker": "Rose",
       "text": "That's what I like to hear. Fine, one more batch.",
-      "next": 10,
+      "next": 11,
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Fair. Take your time, we've got a walk ahead anyway.",
-      "next": 10,
+      "next": 11,
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Ugh, fine. But we're picking this up again tomorrow.",
-      "next": 10,
+      "next": 11,
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Tatay — father. Nanay — mother. Unga — child. Easy ones, you'll hear these a lot.",
-      "next": 11,
+      "next": 12,
       "word_ids": [
         "w033"
       ],
@@ -550,7 +557,7 @@
     {
       "speaker": "Rose",
       "text": "Isa, daywa, tatlo, apat, lima — count with me. Point at each one.",
-      "next": 12,
+      "next": 13,
       "word_ids": [
         "w064"
       ],
@@ -559,7 +566,7 @@
     {
       "speaker": "Player",
       "text": "Isa, daywa, tatlo, apat, lima. Hey, that wasn't so bad.",
-      "next": 13,
+      "next": 14,
       "type": "dialogue"
     },
     {
