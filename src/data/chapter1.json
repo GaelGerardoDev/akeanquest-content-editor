@@ -511,13 +511,17 @@
         }
       ],
       "choices": [
-        "w083"
+        "w083",
+        "w011",
+        "w084"
       ],
       "next": 6,
       "quiz_type": "dynamic",
       "question_template": "What does \"[word]\" mean?",
       "word_pool": [
-        "w083"
+        "w083",
+        "w011",
+        "w084"
       ],
       "question_templates": [
         "What does \"[word]\" mean?",
