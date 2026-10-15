@@ -510,10 +510,15 @@
           "correct_answer": ""
         }
       ],
-      "choices": [],
+      "choices": [
+        "w001"
+      ],
       "next": 6,
       "quiz_type": "dynamic",
-      "question_template": "What does \"[word]\" mean?"
+      "question_template": "What does \"[word]\" mean?",
+      "word_pool": [
+        "w001"
+      ]
     },
     {
       "speaker": "Rose",
