@@ -788,7 +788,11 @@
       "type": "minigame_trigger",
       "minigame_type": "memory_match",
       "success": 34,
-      "failure": 33
+      "failure": 33,
+      "word_pool": [
+        "w090",
+        "w054"
+      ]
     },
     {
       "speaker": "Rose",
