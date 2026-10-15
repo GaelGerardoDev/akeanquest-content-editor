@@ -526,7 +526,12 @@
       "question_templates": [
         "What does \"[word]\" mean?",
         "What Akeanon word means \"[gloss]\"?"
-      ]
+      ],
+      "question_template_choice_displays": [
+        "gloss",
+        "word"
+      ],
+      "choice_display": "gloss"
     },
     {
       "speaker": "Rose",
