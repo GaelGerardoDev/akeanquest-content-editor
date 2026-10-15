@@ -550,7 +550,7 @@
     },
     {
       "speaker": "Rose",
-      "text": "Next are ",
+      "text": "Next are words ",
       "next": 9,
       "word_ids": [],
       "type": "dialogue"
