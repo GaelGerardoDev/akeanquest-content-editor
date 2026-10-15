@@ -512,7 +512,8 @@
       ],
       "choices": [],
       "next": 6,
-      "quiz_type": "dynamic"
+      "quiz_type": "dynamic",
+      "question_template": "What does \"[word]\" mean?"
     },
     {
       "speaker": "Rose",
