@@ -691,10 +691,10 @@
       "type": "dialogue"
     },
     {
-      "speaker": "",
-      "text": "",
-      "next": null,
-      "word_ids": []
+      "type": "minigame_trigger",
+      "minigame_type": "",
+      "success": null,
+      "failure": null
     },
     {
       "speaker": "Rose",
