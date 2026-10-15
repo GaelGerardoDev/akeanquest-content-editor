@@ -27,6 +27,8 @@ function isStartRouter(node: Scene[number]): node is StartRouter {
 }
 function isPhraseBuilderNode(node: Scene[number]): node is PhraseBuilderNode { return typeof node === "object" && node !== null && "type" in node && node.type === "phrase_builder"; }
 function isQuizNode(node: Scene[number]): node is QuizNode { return typeof node === "object" && node !== null && "type" in node && node.type === "quiz"; }
+function quizSuccess(node: QuizNode): number | null { return node.success !== undefined ? node.success : node.next ?? null; }
+function quizFailure(node: QuizNode): number | null { return node.failure ?? null; }
 function isDialogueNode(node: Scene[number]): node is DialogueNodeType {
   return typeof node === "object" && node !== null && "speaker" in node && "text" in node && "next" in node;
 }
@@ -79,7 +81,10 @@ function edges(scene: Scene): Edge[] {
       return;
     }
     if (isQuizNode(node)) {
-      if (node.next !== null && scene[node.next]) result.push({ from: sceneId(i), to: sceneId(node.next) });
+      const success = quizSuccess(node);
+      const failure = quizFailure(node);
+      if (success !== null && scene[success]) result.push({ from: sceneId(i), to: sceneId(success) });
+      if (failure !== null && scene[failure]) result.push({ from: sceneId(i), to: sceneId(failure) });
       return;
     }
     if (isPhraseBuilderNode(node)) {
@@ -148,7 +153,9 @@ function autoLayout(scene: Scene): Record<string, Point> {
         .map(sceneId);
     }
 
-    if (isQuizNode(node)) return node.next !== null && scene[node.next] ? [sceneId(node.next)] : [];
+    if (isQuizNode(node)) return [quizSuccess(node), quizFailure(node)]
+      .filter((next): next is number => next !== null && scene[next] !== undefined)
+      .map(sceneId);
 
     if (isPhraseBuilderNode(node)) {
       return [node.success, node.failure]
@@ -488,7 +495,7 @@ function SceneInspector({
     if (node.type === type) return;
 
     if (type === "dialogue") {
-      if (isQuizNode(node)) { onChange(selected.sceneIndex, { type: "dialogue", speaker: "Player", text: "", next: node.next, word_ids: [] }); }
+      if (isQuizNode(node)) { onChange(selected.sceneIndex, { type: "dialogue", speaker: "Player", text: "", next: quizSuccess(node), word_ids: [] }); }
       else if (isPhraseBuilderNode(node)) {
         const wordIds = node.answer
           .map((word) => wordBank.find((entry) => entry.akeanon.toLocaleLowerCase() === word.toLocaleLowerCase())?.id)
@@ -514,7 +521,7 @@ function SceneInspector({
     }
 
     if (type === "phrase_builder") {
-      if (isQuizNode(node)) { onChange(selected.sceneIndex, { type: "phrase_builder", prompt: "Build a phrase", choices: [...node.choices], answer: node.questions.map((q) => q.correct_answer).filter(Boolean), success: node.next, failure: null }); }
+      if (isQuizNode(node)) { onChange(selected.sceneIndex, { type: "phrase_builder", prompt: "Build a phrase", choices: [...node.choices], answer: node.questions.map((q) => q.correct_answer).filter(Boolean), success: quizSuccess(node), failure: quizFailure(node) }); }
       else if (isDialogueNode(node)) {
         const answer = (node.word_ids ?? [])
           .map((id) => wordBank.find((entry) => entry.id === id)?.akeanon)
@@ -546,8 +553,9 @@ function SceneInspector({
     }
 
     if (type === "quiz") {
-      const next = isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : isStartRouter(node) ? node.start_index_if_flag.default ?? null : node.next;
-      const quiz: QuizNode = { type: "quiz", quiz_type: "manual", questions: [], choices: [], next };
+      const success = isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : isStartRouter(node) ? node.start_index_if_flag.default ?? null : quizSuccess(node);
+      const failure = isQuizNode(node) ? quizFailure(node) : null;
+      const quiz: QuizNode = { type: "quiz", quiz_type: "manual", questions: [], choices: [], success, failure };
       quiz.choices = quizChoicePool(scene.map((item, i) => i === selected.sceneIndex ? quiz : item), selected.sceneIndex);
       onChange(selected.sceneIndex, quiz);
       return;
@@ -557,7 +565,7 @@ function SceneInspector({
       onChange(selected.sceneIndex, {
         type: "start_router",
         start_index_if_flag: {
-          default: isStartRouter(node) ? node.start_index_if_flag.default : isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : isQuizNode(node) ? node.next : null,
+          default: isStartRouter(node) ? node.start_index_if_flag.default : isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : isQuizNode(node) ? quizSuccess(node) : null,
         },
       });
     }
@@ -634,7 +642,8 @@ function SceneInspector({
           </div>
           <Field label="Choices Pool"><div className="phrase-choice-list">{choices.map((id) => { const word = wordBank.find((entry) => entry.id === id); return <span className="word-id-chip" key={id}><span style={{ whiteSpace: "normal", overflowWrap: "anywhere" }}>{word ? word.akeanon : "Unknown word"}</span><code>{id}</code></span>; })}</div><small>Dynamic choices come only from the selected Word Pool.</small></Field>
         </>}
-        <Field label="Next"><select value={node.next ?? ""} onChange={(e) => onChange(selected.sceneIndex, { ...node, next: e.target.value === "" ? null : Number(e.target.value), choices })}><option value="">End</option>{scene.map((_, i) => <option key={i} value={i}>Node #{i} — {title(scene[i], i)}</option>)}</select></Field>
+        <Field label="Success"><select value={quizSuccess(node) ?? ""} onChange={(e) => onChange(selected.sceneIndex, { ...node, success: e.target.value === "" ? null : Number(e.target.value), next: undefined, choices })}><option value="">End</option>{scene.map((_, i) => <option key={i} value={i}>Node #{i} — {title(scene[i], i)}</option>)}</select></Field>
+        <Field label="Failure"><select value={quizFailure(node) ?? ""} onChange={(e) => onChange(selected.sceneIndex, { ...node, failure: e.target.value === "" ? null : Number(e.target.value), next: undefined, choices })}><option value="">End</option>{scene.map((_, i) => <option key={i} value={i}>Node #{i} — {title(scene[i], i)}</option>)}</select></Field>
         <div className="scene-inspector-actions"><button type="button" onClick={() => onAdd(selected.sceneIndex)}>+ Dialogue Node</button><button type="button" onClick={() => onAddPhraseBuilder(selected.sceneIndex)}>+ Phrase Builder</button><button type="button" className="danger" onClick={() => onDelete(selected.sceneIndex)}>Delete</button></div>
       </div>
     </aside>;
@@ -926,7 +935,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     if (!sceneData) return;
     const insert = index + 1;
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
-    const next = sceneData.map((node): Scene[number] => isDialogueNode(node) ? { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure) } : isQuizNode(node) ? { ...node, next: shift(node.next) } : node);
+    const next = sceneData.map((node): Scene[number] => isDialogueNode(node) ? { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure) } : isQuizNode(node) ? { ...node, success: shift(quizSuccess(node)), failure: shift(quizFailure(node)), next: undefined } : node);
     next.splice(insert, 0, { speaker: "", text: "", next: null, word_ids: [] });
     next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
@@ -939,8 +948,8 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     if (!isDialogueNode(node) && !isQuizNode(node)) return;
     const insert = index + 1;
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
-    const next = sceneData.map((item): Scene[number] => isDialogueNode(item) ? { ...item, next: shift(item.next), choices: item.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(item) ? { ...item, success: shift(item.success), failure: shift(item.failure) } : isQuizNode(item) ? { ...item, next: shift(item.next) } : item);
-    next.splice(insert, 0, isQuizNode(node) ? { ...node, next: shift(node.next), questions: node.questions.map((q) => ({ ...q })), choices: [...node.choices] } : { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) });
+    const next = sceneData.map((item): Scene[number] => isDialogueNode(item) ? { ...item, next: shift(item.next), choices: item.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(item) ? { ...item, success: shift(item.success), failure: shift(item.failure) } : isQuizNode(item) ? { ...item, success: shift(quizSuccess(item)), failure: shift(quizFailure(item)), next: undefined } : item);
+    next.splice(insert, 0, isQuizNode(node) ? { ...node, success: shift(quizSuccess(node)), failure: shift(quizFailure(node)), next: undefined, questions: node.questions.map((q) => ({ ...q })), choices: [...node.choices] } : { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) });
     next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex) }; });
     onChange(next);
     setSelected({ kind: "scene", sceneIndex: insert });
@@ -951,7 +960,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     const next = sceneData.filter((_, i) => i !== index).map((node): Scene[number] => {
       const fix = (v: number | null) => v === index ? null : v !== null && v > index ? v - 1 : v;
       if (isPhraseBuilderNode(node)) return { ...node, success: fix(node.success), failure: fix(node.failure) };
-      if (isQuizNode(node)) return { ...node, next: fix(node.next) };
+      if (isQuizNode(node)) return { ...node, success: fix(quizSuccess(node)), failure: fix(quizFailure(node)), next: undefined };
       if (!isDialogueNode(node)) return node;
       return { ...node, next: fix(node.next), choices: node.choices?.map((c) => ({ ...c, next: fix(c.next) })) };
     });
