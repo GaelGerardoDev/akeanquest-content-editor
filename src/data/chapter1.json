@@ -503,13 +503,13 @@
       "questions": [
         {
           "question": "What akeanon word has the meaning \"he/she or him/her\"",
-          "correct_answer": "w011"
+          "correct_answer": "w084"
         }
       ],
       "choices": [
+        "w084",
         "w011",
-        "w246",
-        "w084"
+        "w246"
       ],
       "next": 6
     },
