@@ -868,7 +868,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     onChange(next);
   }
 
-  function addPhraseBuilder(index: number) { if (!sceneData) return; const insert=index+1; const shift=(v:number|null)=>v!==null&&v>=insert?v+1:v; const next=sceneData.map((node):Scene[number]=>isDialogueNode(node)?{...node,next:shift(node.next),choices:node.choices?.map(c=>({...c,next:shift(c.next)}))}:isPhraseBuilderNode(node)?{...node,success:shift(node.success),failure:shift(node.failure)}:isQuizNode(node)?{...node,next:shift(node.next)}:node); next.splice(insert,0,{type:"phrase_builder",prompt:"",choices:[],answer:[],success:null,failure:null}); onChange(next); setSelected({kind:"scene",sceneIndex:insert}); }
+  function addPhraseBuilder(index: number) { if (!sceneData) return; const insert=index+1; const shift=(v:number|null)=>v!==null&&v>=insert?v+1:v; const next=sceneData.map((node):Scene[number]=>isDialogueNode(node)?{...node,next:shift(node.next),choices:node.choices?.map(c=>({...c,next:shift(c.next)}))}:isPhraseBuilderNode(node)?{...node,success:shift(node.success),failure:shift(node.failure)}:isQuizNode(node)?{...node,next:shift(node.next)}:node); next.splice(insert,0,{type:"phrase_builder",prompt:"",choices:[],answer:[],success:null,failure:null}); next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; }); onChange(next); setSelected({kind:"scene",sceneIndex:insert}); }
 
   function addNode(index: number) {
     if (!sceneData) return;
@@ -876,6 +876,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
     const next = sceneData.map((node): Scene[number] => isDialogueNode(node) ? { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure) } : isQuizNode(node) ? { ...node, next: shift(node.next) } : node);
     next.splice(insert, 0, { speaker: "", text: "", next: null, word_ids: [] });
+    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; });
     onChange(next);
     setSelected({ kind: "scene", sceneIndex: insert });
   }
@@ -888,6 +889,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
     const next = sceneData.map((item): Scene[number] => isDialogueNode(item) ? { ...item, next: shift(item.next), choices: item.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(item) ? { ...item, success: shift(item.success), failure: shift(item.failure) } : isQuizNode(item) ? { ...item, next: shift(item.next) } : item);
     next.splice(insert, 0, isQuizNode(node) ? { ...node, next: shift(node.next), questions: node.questions.map((q) => ({ ...q })), choices: [...node.choices] } : { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) });
+    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; });
     onChange(next);
     setSelected({ kind: "scene", sceneIndex: insert });
   }
@@ -901,6 +903,7 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
       if (!isDialogueNode(node)) return node;
       return { ...node, next: fix(node.next), choices: node.choices?.map((c) => ({ ...c, next: fix(c.next) })) };
     });
+    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; });
     onChange(next);
     setSelected(index > 0 ? { kind: "scene", sceneIndex: index - 1 } : next.length ? { kind: "scene", sceneIndex: 0 } : null);
   }
