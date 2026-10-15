@@ -708,7 +708,7 @@
       "next": 26,
       "word_ids": [],
       "set_flag": {
-        "flag": "is_numbers_set_",
+        "flag": "is_numbers_rre",
         "value": true
       }
     },
