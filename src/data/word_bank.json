@@ -903,7 +903,7 @@
     {
       "id": "w101",
       "akeanon": "kami",
-      "category": "",
+      "category": "Pronoun (pro)",
       "area": "chapter1",
       "gloss": "we (excl.)",
       "verified": false,
@@ -912,7 +912,7 @@
     {
       "id": "w102",
       "akeanon": "kamo",
-      "category": "",
+      "category": "Pronoun (pro)",
       "area": "chapter1",
       "gloss": "you (pl.)",
       "verified": false,
@@ -1011,9 +1011,9 @@
     {
       "id": "w113",
       "akeanon": "kita",
-      "category": "",
+      "category": "Pronoun (pro)",
       "area": "chapter2",
-      "gloss": "us or we (incl)",
+      "gloss": "us or we (incl.)",
       "verified": false,
       "source": ""
     },
@@ -1884,9 +1884,9 @@
     {
       "id": "w210",
       "akeanon": "sanda",
-      "category": "",
+      "category": "Pronoun (pro)",
       "area": "chapter1",
-      "gloss": "they",
+      "gloss": "they or them",
       "verified": false,
       "source": ""
     },
