@@ -706,7 +706,11 @@
       "speaker": "Rose",
       "text": "It's OK, I'll teach you again as a refresher",
       "next": 26,
-      "word_ids": []
+      "word_ids": [],
+      "set_flag": {
+        "flag": "is_nu",
+        "value": true
+      }
     },
     {
       "speaker": "Rose",
