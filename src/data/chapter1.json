@@ -25,9 +25,10 @@
     },
     {
       "speaker": "Player",
-      "text": "Grandma, are you okay? You've been staring at that photo for a while.",
+      "text": "You've been staring at that photo for a while.",
       "next": 4,
-      "type": "dialogue"
+      "type": "dialogue",
+      "word_ids": []
     },
     {
       "speaker": "Lola Jonabel",
