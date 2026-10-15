@@ -978,12 +978,26 @@ function SceneMap({ scene, selected, onSelect }: { scene: Scene; selected: Selec
               const y2 = to.y + (toVisual.kind === "choice" ? choiceHeight(scene[toVisual.sceneIndex].choices![toVisual.choiceIndex!]) : nodeHeight(scene[toVisual.sceneIndex])) / 2;
               const routeX = x1 + Math.min(28, Math.max(8, (x2 - x1) / 2));
               const laneY = Math.min(...Object.values(display).map((point) => point.y), 0) - 40 - i * 3;
+              const directBlocked = nodeVisuals.some((visual) => {
+                if (visual.id === edge.from || visual.id === edge.to) return false;
+                const point = display[visual.id];
+                if (!point) return false;
+                const width = visual.kind === "choice" ? CHOICE_WIDTH : NODE_WIDTH;
+                const height = visual.kind === "choice" ? choiceHeight(scene[visual.sceneIndex].choices![visual.choiceIndex!]) : nodeHeight(scene[visual.sceneIndex]);
+                for (let step = 1; step < 40; step++) {
+                  const t = step / 40;
+                  const px = x1 + (x2 - x1) * t;
+                  const py = y1 + (y2 - y1) * t;
+                  if (px > point.x - 8 && px < point.x + width + 8 && py > point.y - 8 && py < point.y + height + 8) return true;
+                }
+                return false;
+              });
               const spansColumns = x2 > x1 + fromWidth + 80;
-              const d = spansColumns
-                ? `M ${x1} ${y1} L ${x1 + 24} ${y1} L ${x1 + 24} ${laneY} L ${x2 - 24} ${laneY} L ${x2 - 24} ${y2} L ${x2} ${y2}`
-                : x2 > x1
-                  ? `M ${x1} ${y1} L ${routeX} ${y1} L ${routeX} ${y2} L ${x2} ${y2}`
-                  : `M ${x1} ${y1} L ${x1 + 24} ${y1} L ${x1 + 24} ${laneY} L ${x2 - 24} ${laneY} L ${x2 - 24} ${y2} L ${x2} ${y2}`;
+              const d = x2 > x1 && !directBlocked
+                ? `M ${x1} ${y1} L ${x2} ${y2}`
+                : spansColumns || x2 <= x1
+                  ? `M ${x1} ${y1} L ${x1 + 24} ${y1} L ${x1 + 24} ${laneY} L ${x2 - 24} ${laneY} L ${x2 - 24} ${y2} L ${x2} ${y2}`
+                  : `M ${x1} ${y1} L ${routeX} ${y1} L ${routeX} ${y2} L ${x2} ${y2}`;
               return <path key={i} className={`scene-graph-edge ${edge.choice ? "choice" : ""} ${edge.route === "flag" ? "flag-route" : ""}`} d={d} />;
             })}
           </svg>
