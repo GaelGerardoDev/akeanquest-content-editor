@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import type { Scene, IdlePool, DialogueNode as DialogueNodeType, PhraseBuilderNode, Choice, StartRouter } from "../types/content";
+import type { Scene, IdlePool, DialogueNode as DialogueNodeType, PhraseBuilderNode, Choice, StartRouter, QuizNode } from "../types/content";
 import { resolveWordReferences, syncWordIdsFromText, type WordBankReferenceEntry } from "../utils/wordReferences";
 
 type SceneEditorProps = {
@@ -26,12 +26,14 @@ function isStartRouter(node: Scene[number]): node is StartRouter {
   return typeof node === "object" && node !== null && "type" in node && node.type === "start_router";
 }
 function isPhraseBuilderNode(node: Scene[number]): node is PhraseBuilderNode { return typeof node === "object" && node !== null && "type" in node && node.type === "phrase_builder"; }
+function isQuizNode(node: Scene[number]): node is QuizNode { return typeof node === "object" && node !== null && "type" in node && node.type === "quiz"; }
 function isDialogueNode(node: Scene[number]): node is DialogueNodeType {
   return typeof node === "object" && node !== null && "speaker" in node && "text" in node && "next" in node;
 }
 function title(node: Scene[number], index: number) {
   if (isStartRouter(node)) return "Scene Start";
   if (isPhraseBuilderNode(node)) return node.prompt || "Phrase Builder";
+  if (isQuizNode(node)) return "Quiz";
   if (!isDialogueNode(node)) return `Node ${index}`;
   return node.choices?.length ? node.text || "User Prompt" : node.speaker || node.text || `Node ${index}`;
 }
@@ -45,6 +47,7 @@ function nodeId(selected: SelectedNode) {
 function nodeHeight(node: Scene[number]) {
   if (isStartRouter(node)) return 70;
   if (isPhraseBuilderNode(node)) return 110;
+  if (isQuizNode(node)) return 100;
   if (!isDialogueNode(node)) return 80;
   const text = node.text || "";
   return Math.min(150, 82 + Math.max(0, Math.ceil(text.length / 42) - 1) * 14);
@@ -73,6 +76,10 @@ function edges(scene: Scene): Edge[] {
       [...new Set(Object.values(node.start_index_if_flag))]
         .filter((next): next is number => typeof next === "number" && scene[next] !== undefined)
         .forEach((next) => result.push({ from: sceneId(i), to: sceneId(next) }));
+      return;
+    }
+    if (isQuizNode(node)) {
+      if (node.next !== null && scene[node.next]) result.push({ from: sceneId(i), to: sceneId(node.next) });
       return;
     }
     if (isPhraseBuilderNode(node)) {
@@ -140,6 +147,8 @@ function autoLayout(scene: Scene): Record<string, Point> {
         .filter((next): next is number => typeof next === "number" && scene[next] !== undefined)
         .map(sceneId);
     }
+
+    if (isQuizNode(node)) return node.next !== null && scene[node.next] ? [sceneId(node.next)] : [];
 
     if (isPhraseBuilderNode(node)) {
       return [node.success, node.failure]
@@ -284,6 +293,17 @@ function autoLayout(scene: Scene): Record<string, Point> {
   return positions;
 }
 
+function quizChoicePool(scene: Scene, quizIndex: number, wordBank: WordBankEntry[]): string[] {
+  const introduced = scene.slice(0, quizIndex).flatMap((node) => {
+    if (isDialogueNode(node)) return (node.word_ids ?? []).map((id) => wordBank.find((word) => word.id === id)?.akeanon ?? "");
+    if (isPhraseBuilderNode(node)) return node.answer;
+    return [];
+  });
+  const quiz = scene[quizIndex];
+  const answers = isQuizNode(quiz) ? quiz.questions.map((question) => question.correct_answer) : [];
+  return [...new Set([...answers, ...introduced].map((word) => word.trim()).filter(Boolean))];
+}
+
 type WordBankEntry = WordBankReferenceEntry & {
   gloss: string;
   area: string;
@@ -405,7 +425,7 @@ function SceneInspector({
 }: {
   scene: Scene;
   selected: SelectedNode | null;
-  onChange: (index: number, node: DialogueNodeType | PhraseBuilderNode | StartRouter) => void;
+  onChange: (index: number, node: DialogueNodeType | PhraseBuilderNode | StartRouter | QuizNode) => void;
   onAdd: (index: number) => void;
   onDuplicate: (index: number) => void;
   onDelete: (index: number) => void;
@@ -462,11 +482,12 @@ function SceneInspector({
 
   const node = scene[selected.sceneIndex];
 
-  const changeNodeType = (type: "dialogue" | "phrase_builder" | "start_router") => {
+  const changeNodeType = (type: "dialogue" | "phrase_builder" | "start_router" | "quiz") => {
     if (node.type === type) return;
 
     if (type === "dialogue") {
-      if (isPhraseBuilderNode(node)) {
+      if (isQuizNode(node)) { onChange(selected.sceneIndex, { type: "dialogue", speaker: "Player", text: "", next: node.next, word_ids: [] }); }
+      else if (isPhraseBuilderNode(node)) {
         const wordIds = node.answer
           .map((word) => wordBank.find((entry) => entry.akeanon.toLocaleLowerCase() === word.toLocaleLowerCase())?.id)
           .filter((id): id is string => Boolean(id));
@@ -491,7 +512,8 @@ function SceneInspector({
     }
 
     if (type === "phrase_builder") {
-      if (isDialogueNode(node)) {
+      if (isQuizNode(node)) { onChange(selected.sceneIndex, { type: "phrase_builder", prompt: "Build a phrase", choices: [...node.choices], answer: node.questions.map((q) => q.correct_answer).filter(Boolean), success: node.next, failure: null }); }
+      else if (isDialogueNode(node)) {
         const answer = (node.word_ids ?? [])
           .map((id) => wordBank.find((entry) => entry.id === id)?.akeanon)
           .filter((word): word is string => Boolean(word));
@@ -521,15 +543,50 @@ function SceneInspector({
       return;
     }
 
+    if (type === "quiz") {
+      const next = isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : isStartRouter(node) ? node.start_index_if_flag.default ?? null : node.next;
+      const quiz: QuizNode = { type: "quiz", questions: [], choices: [], next };
+      quiz.choices = quizChoicePool(scene.map((item, i) => i === selected.sceneIndex ? quiz : item), selected.sceneIndex, wordBank);
+      onChange(selected.sceneIndex, quiz);
+      return;
+    }
+
     if (type === "start_router") {
       onChange(selected.sceneIndex, {
         type: "start_router",
         start_index_if_flag: {
-          default: isStartRouter(node) ? node.start_index_if_flag.default : isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : null,
+          default: isStartRouter(node) ? node.start_index_if_flag.default : isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : isQuizNode(node) ? node.next : null,
         },
       });
     }
   };
+
+  if (isQuizNode(node)) {
+    const choices = quizChoicePool(scene, selected.sceneIndex, wordBank);
+    const updateQuestions = (questions: QuizNode["questions"]) => {
+      const nextScene = scene.map((item, index) => index === selected.sceneIndex ? { ...node, questions } : item);
+      const updated = { ...node, questions, choices: quizChoicePool(nextScene, selected.sceneIndex, wordBank) };
+      onChange(selected.sceneIndex, updated);
+    };
+    const updateQuestion = (index: number, patch: Partial<QuizNode["questions"][number]>) => updateQuestions(node.questions.map((question, i) => i === index ? { ...question, ...patch } : question));
+    return <aside className="scene-inspector">
+      <div className="scene-inspector-header"><span>QUIZ</span><strong>Node #{selected.sceneIndex}</strong><small>{node.questions.length} question{node.questions.length === 1 ? "" : "s"}</small></div>
+      <div className="scene-inspector-body">
+        <Field label="Type"><select value={node.type} onChange={(e) => changeNodeType(e.target.value as "dialogue" | "phrase_builder" | "start_router" | "quiz" | "quiz")}><option value="dialogue">Dialogue</option><option value="phrase_builder">Phrase Builder</option><option value="quiz">Quiz</option><option value="start_router">Start Router</option></select></Field>
+        <div className="scene-inspector-section"><div className="scene-inspector-section-title">Questions</div>
+          {node.questions.map((question, index) => <div className="quiz-question-card" key={index}>
+            <div className="quiz-question-heading"><strong>Question {index + 1}</strong><button type="button" className="danger" onClick={() => updateQuestions(node.questions.filter((_, i) => i !== index))}>Remove</button></div>
+            <Field label="Question"><textarea rows={3} value={question.question} onChange={(e) => updateQuestion(index, { question: e.target.value })} placeholder="Enter the question…" /></Field>
+            <Field label="Correct Answer"><input value={question.correct_answer} onChange={(e) => updateQuestion(index, { correct_answer: e.target.value })} placeholder="Correct answer word or phrase" /></Field>
+          </div>)}
+          <button type="button" onClick={() => updateQuestions([...node.questions, { question: "", correct_answer: "" }])}>+ Add Question</button>
+        </div>
+        <Field label="Choices Pool"><div className="phrase-choice-list">{choices.map((word, index) => <span className="word-id-chip" key={word + index}><span>{word}</span></span>)}</div><small>Unique correct answers plus words introduced before this quiz in the chapter. Later words are excluded.</small></Field>
+        <Field label="Next"><select value={node.next ?? ""} onChange={(e) => onChange(selected.sceneIndex, { ...node, next: e.target.value === "" ? null : Number(e.target.value), choices })}><option value="">End</option>{scene.map((_, i) => <option key={i} value={i}>Node #{i} — {title(scene[i], i)}</option>)}</select></Field>
+        <div className="scene-inspector-actions"><button type="button" onClick={() => onAdd(selected.sceneIndex)}>+ Dialogue Node</button><button type="button" onClick={() => onAddPhraseBuilder(selected.sceneIndex)}>+ Phrase Builder</button><button type="button" className="danger" onClick={() => onDelete(selected.sceneIndex)}>Delete</button></div>
+      </div>
+    </aside>;
+  }
 
   if (isPhraseBuilderNode(node)) {
     const update = <K extends keyof PhraseBuilderNode>(field: K, value: PhraseBuilderNode[K]) => onChange(selected.sceneIndex, { ...node, [field]: value });
@@ -545,7 +602,7 @@ function SceneInspector({
     return (<aside className="scene-inspector">
       <div className="scene-inspector-header"><span>PHRASE BUILDER</span><strong>Node #{selected.sceneIndex}</strong><small>Construct a sentence from word choices</small></div>
       <div className="scene-inspector-body">
-        <Field label="Type"><select value={node.type} onChange={(e) => changeNodeType(e.target.value as "dialogue" | "phrase_builder" | "start_router")}><option value="dialogue">Dialogue</option><option value="phrase_builder">Phrase Builder</option><option value="start_router">Start Router</option></select></Field>
+        <Field label="Type"><select value={node.type} onChange={(e) => changeNodeType(e.target.value as "dialogue" | "phrase_builder" | "start_router" | "quiz")}><option value="dialogue">Dialogue</option><option value="phrase_builder">Phrase Builder</option><option value="quiz">Quiz</option><option value="start_router">Start Router</option></select></Field>
         <Field label="Prompt"><textarea value={node.prompt} onChange={(e) => update("prompt", e.target.value)} rows={5} placeholder="What should the player construct?" /></Field>
         <Field label="Correct Answer"><div className="phrase-answer-list">
           {node.answer.map((word, index) => <div className="phrase-answer-row" key={index}><span>{index + 1}</span><select value={word} onChange={(e) => { const answer=[...node.answer]; answer[index]=e.target.value; setAnswer(answer); }}><option value="">Select a word…</option>{wordBank.map((entry)=><option key={entry.id} value={entry.akeanon}>{entry.akeanon} · {entry.id}</option>)}</select><button type="button" onClick={()=>setAnswer(node.answer.filter((_,i)=>i!==index))}>×</button></div>)}
@@ -564,7 +621,7 @@ function SceneInspector({
       <aside className="scene-inspector">
         <div className="scene-inspector-header"><span>SCENE NODE</span><strong>Scene Start</strong><small>Node #0</small></div>
         <div className="scene-inspector-body">
-          <Field label="Type"><select value={node.type} onChange={(e) => changeNodeType(e.target.value as "dialogue" | "phrase_builder" | "start_router")}><option value="dialogue">Dialogue</option><option value="phrase_builder">Phrase Builder</option><option value="start_router">Start Router</option></select></Field>
+          <Field label="Type"><select value={node.type} onChange={(e) => changeNodeType(e.target.value as "dialogue" | "phrase_builder" | "start_router" | "quiz")}><option value="dialogue">Dialogue</option><option value="phrase_builder">Phrase Builder</option><option value="quiz">Quiz</option><option value="start_router">Start Router</option></select></Field>
           <p className="scene-inspector-help">Controls which node starts when a flag condition matches.</p>
           {Object.entries(node.start_index_if_flag).map(([flag, value]) => (
             <Field key={flag} label={flag}><input type="number" value={value} onChange={(e) => onChange(selected.sceneIndex, { ...node, start_index_if_flag: { ...node.start_index_if_flag, [flag]: Number(e.target.value) } })} /></Field>
@@ -586,7 +643,7 @@ function SceneInspector({
     <aside className="scene-inspector">
       <div className="scene-inspector-header"><span>{node.choices?.length ? "USER PROMPT" : "DIALOGUE"}</span><strong>Node #{selected.sceneIndex}</strong><small>{node.speaker || "No speaker"}</small></div>
       <div className="scene-inspector-body">
-        <Field label="Type"><select value={node.type} onChange={(e) => changeNodeType(e.target.value as "dialogue" | "phrase_builder" | "start_router")}><option value="dialogue">Dialogue</option><option value="phrase_builder">Phrase Builder</option><option value="start_router">Start Router</option></select></Field>
+        <Field label="Type"><select value={node.type} onChange={(e) => changeNodeType(e.target.value as "dialogue" | "phrase_builder" | "start_router" | "quiz")}><option value="dialogue">Dialogue</option><option value="phrase_builder">Phrase Builder</option><option value="quiz">Quiz</option><option value="start_router">Start Router</option></select></Field>
         <Field label="Speaker"><input value={node.speaker} onChange={(e) => update("speaker", e.target.value)} placeholder="Speaker" /></Field>
         <Field label={node.choices?.length ? "User Prompt" : "Dialogue"}><textarea value={node.text} onChange={(e) => updateText(e.target.value)} rows={8} /></Field>
         <Field label="Translation"><textarea value={node.translation ?? ""} onChange={(e) => update("translation", e.target.value || undefined)} rows={5} /></Field>
@@ -765,7 +822,7 @@ function SceneMap({ scene, selected, onSelect }: { scene: Scene; selected: Selec
                 ? source.text || (source.choices?.length ? "User Prompt" : "Empty dialogue")
                 : title(source, visual.sceneIndex);
             return (
-              <button key={visual.id} type="button" data-node className={`scene-graph-node ${visual.kind} ${visual.kind === "choice" ? "type-choice" : isStartRouter(source) ? "type-start" : isPhraseBuilderNode(source) ? "type-phrase" : isDialogueNode(source) && source.choices?.length ? "type-prompt" : "type-dialogue"} ${isSelected ? "selected" : ""}`} style={{ left: p.x, top: p.y, width }} onClick={(e) => {
+              <button key={visual.id} type="button" data-node className={`scene-graph-node ${visual.kind} ${visual.kind === "choice" ? "type-choice" : isStartRouter(source) ? "type-start" : isPhraseBuilderNode(source) ? "type-phrase" : isQuizNode(source) ? "type-quiz" : isDialogueNode(source) && source.choices?.length ? "type-prompt" : "type-dialogue"} ${isSelected ? "selected" : ""}`} style={{ left: p.x, top: p.y, width }} onClick={(e) => {
                 e.stopPropagation();
                 if (didPanRef.current) {
                   didPanRef.current = false;
@@ -774,9 +831,9 @@ function SceneMap({ scene, selected, onSelect }: { scene: Scene; selected: Selec
                 onSelect(visual.kind === "choice" ? { kind: "choice", sceneIndex: visual.sceneIndex, choiceIndex: visual.choiceIndex! } : { kind: "scene", sceneIndex: visual.sceneIndex });
               }}>
                 <span className="scene-graph-node-meta">
-                  <span className="scene-graph-node-speaker">{visual.kind === "choice" ? "Player" : isDialogueNode(source) ? source.speaker || "—" : "—"}</span>
+                  <span className="scene-graph-node-speaker">{visual.kind === "choice" ? "Player" : isDialogueNode(source) ? source.speaker || "—" : isQuizNode(source) ? "Player" : "—"}</span>
                   <span className="scene-graph-node-divider">|</span>
-                  <span className="scene-graph-node-type">{visual.kind === "choice" ? "CHOICE" : isStartRouter(source) ? "START" : isPhraseBuilderNode(source) ? "PHRASE BUILDER" : isDialogueNode(source) && source.choices?.length ? "PROMPT" : "DIALOGUE"}</span>
+                  <span className="scene-graph-node-type">{visual.kind === "choice" ? "CHOICE" : isStartRouter(source) ? "START" : isPhraseBuilderNode(source) ? "PHRASE BUILDER" : isQuizNode(source) ? "QUIZ" : isDialogueNode(source) && source.choices?.length ? "PROMPT" : "DIALOGUE"}</span>
                 </span>
                 <span className="scene-graph-node-content">{visual.kind === "choice" ? label || "Empty choice" : label}</span>
                 <span className="scene-graph-node-footer"><span>#{visual.sceneIndex}</span></span>
@@ -797,10 +854,11 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
   );
   const hasSelection = data !== null;
 
-  function updateNode(index: number, node: DialogueNodeType | PhraseBuilderNode | StartRouter) {
+  function updateNode(index: number, node: DialogueNodeType | PhraseBuilderNode | StartRouter | QuizNode) {
     if (!sceneData) return;
     const next = [...sceneData];
     next[index] = node;
+    next.forEach((item, quizIndex) => { if (isQuizNode(item)) next[quizIndex] = { ...item, choices: quizChoicePool(next, quizIndex, wordBank) }; });
     onChange(next);
   }
 
@@ -810,13 +868,13 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
     onChange(next);
   }
 
-  function addPhraseBuilder(index: number) { if (!sceneData) return; const insert=index+1; const shift=(v:number|null)=>v!==null&&v>=insert?v+1:v; const next=sceneData.map((node):Scene[number]=>isDialogueNode(node)?{...node,next:shift(node.next),choices:node.choices?.map(c=>({...c,next:shift(c.next)}))}:isPhraseBuilderNode(node)?{...node,success:shift(node.success),failure:shift(node.failure)}:node); next.splice(insert,0,{type:"phrase_builder",prompt:"",choices:[],answer:[],success:null,failure:null}); onChange(next); setSelected({kind:"scene",sceneIndex:insert}); }
+  function addPhraseBuilder(index: number) { if (!sceneData) return; const insert=index+1; const shift=(v:number|null)=>v!==null&&v>=insert?v+1:v; const next=sceneData.map((node):Scene[number]=>isDialogueNode(node)?{...node,next:shift(node.next),choices:node.choices?.map(c=>({...c,next:shift(c.next)}))}:isPhraseBuilderNode(node)?{...node,success:shift(node.success),failure:shift(node.failure)}:isQuizNode(node)?{...node,next:shift(node.next)}:node); next.splice(insert,0,{type:"phrase_builder",prompt:"",choices:[],answer:[],success:null,failure:null}); onChange(next); setSelected({kind:"scene",sceneIndex:insert}); }
 
   function addNode(index: number) {
     if (!sceneData) return;
     const insert = index + 1;
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
-    const next = sceneData.map((node): Scene[number] => isDialogueNode(node) ? { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure) } : node);
+    const next = sceneData.map((node): Scene[number] => isDialogueNode(node) ? { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(node) ? { ...node, success: shift(node.success), failure: shift(node.failure) } : isQuizNode(node) ? { ...node, next: shift(node.next) } : node);
     next.splice(insert, 0, { speaker: "", text: "", next: null, word_ids: [] });
     onChange(next);
     setSelected({ kind: "scene", sceneIndex: insert });
@@ -825,20 +883,21 @@ export default function SceneEditor({ name, data, onChange, onSave, onArchive, w
   function duplicateNode(index: number) {
     if (!sceneData) return;
     const node = sceneData[index];
-    if (!isDialogueNode(node)) return;
+    if (!isDialogueNode(node) && !isQuizNode(node)) return;
     const insert = index + 1;
     const shift = (v: number | null) => v !== null && v >= insert ? v + 1 : v;
-    const next = sceneData.map((item): Scene[number] => isDialogueNode(item) ? { ...item, next: shift(item.next), choices: item.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(item) ? { ...item, success: shift(item.success), failure: shift(item.failure) } : item);
-    next.splice(insert, 0, { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) });
+    const next = sceneData.map((item): Scene[number] => isDialogueNode(item) ? { ...item, next: shift(item.next), choices: item.choices?.map((c) => ({ ...c, next: shift(c.next) })) } : isPhraseBuilderNode(item) ? { ...item, success: shift(item.success), failure: shift(item.failure) } : isQuizNode(item) ? { ...item, next: shift(item.next) } : item);
+    next.splice(insert, 0, isQuizNode(node) ? { ...node, next: shift(node.next), questions: node.questions.map((q) => ({ ...q })), choices: [...node.choices] } : { ...node, next: shift(node.next), choices: node.choices?.map((c) => ({ ...c, next: shift(c.next) })) });
     onChange(next);
     setSelected({ kind: "scene", sceneIndex: insert });
   }
 
   function deleteNode(index: number) {
-    if (!sceneData || (!isDialogueNode(sceneData[index]) && !isPhraseBuilderNode(sceneData[index]))) return;
+    if (!sceneData || (!isDialogueNode(sceneData[index]) && !isPhraseBuilderNode(sceneData[index]) && !isQuizNode(sceneData[index]))) return;
     const next = sceneData.filter((_, i) => i !== index).map((node): Scene[number] => {
       const fix = (v: number | null) => v === index ? null : v !== null && v > index ? v - 1 : v;
       if (isPhraseBuilderNode(node)) return { ...node, success: fix(node.success), failure: fix(node.failure) };
+      if (isQuizNode(node)) return { ...node, next: fix(node.next) };
       if (!isDialogueNode(node)) return node;
       return { ...node, next: fix(node.next), choices: node.choices?.map((c) => ({ ...c, next: fix(c.next) })) };
     });
