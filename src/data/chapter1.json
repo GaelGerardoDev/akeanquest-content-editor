@@ -708,7 +708,7 @@
       "next": 26,
       "word_ids": [],
       "set_flag": {
-        "flag": "is_numbers_rre",
+        "flag": "is_numbers_refresher",
         "value": true
       }
     },
