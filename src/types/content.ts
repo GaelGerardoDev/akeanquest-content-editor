@@ -1,3 +1,14 @@
+export type FlagSetting = {
+  flag: string;
+  value: boolean;
+};
+
+export type FlaggedNode = {
+  set_flag?: FlagSetting | null;
+  check_flag?: string | null;
+  check_flag_next?: number | null;
+};
+
 export type Choice = {
   label: string;
   next: number | null;
@@ -5,7 +16,7 @@ export type Choice = {
   patience_delta?: -10 | 0 | 10;
 };
 
-export type PhraseBuilderNode = {
+export type PhraseBuilderNode = FlaggedNode & {
   type: "phrase_builder";
   prompt: string;
   choices: string[];
@@ -15,7 +26,7 @@ export type PhraseBuilderNode = {
   translation?: string;
 };
 
-export type DialogueNode = {
+export type DialogueNode = FlaggedNode & {
   type: "dialogue";
   speaker: string;
   text: string;
@@ -31,7 +42,7 @@ export type QuizQuestion = {
   correct_answer: string;
 };
 
-export type QuizNode = {
+export type QuizNode = FlaggedNode & {
   type: "quiz";
   /** Missing values are treated as manual for backward compatibility. */
   quiz_type?: "manual" | "dynamic";
@@ -55,14 +66,14 @@ export type QuizNode = {
   word_pool?: string[];
 };
 
-export type MinigameTriggerNode = {
+export type MinigameTriggerNode = FlaggedNode & {
   type: "minigame_trigger";
   minigame_type: string;
   success: number | null;
   failure: number | null;
 };
 
-export type StartRouter = {
+export type StartRouter = FlaggedNode & {
   type: "start_router";
   start_index_if_flag: Record<string, number>;
 };
