@@ -644,8 +644,8 @@
         "w113",
         "w210"
       ],
-      "success": 22,
-      "failure": 21,
+      "success": 24,
+      "failure": 23,
       "question_templates": [
         "\"[word]\" means what?"
       ],
@@ -677,7 +677,7 @@
         },
         {
           "label": "No\n",
-          "next": 23,
+          "next": 25,
           "rapport_delta": 0,
           "patience_delta": 0
         }
@@ -692,9 +692,21 @@
     },
     {
       "type": "minigame_trigger",
-      "minigame_type": "",
-      "success": null,
-      "failure": null
+      "minigame_type": "memory_match",
+      "success": 21,
+      "failure": 22
+    },
+    {
+      "speaker": "Rose",
+      "text": "Wow! You know more than I thought.",
+      "next": null,
+      "word_ids": []
+    },
+    {
+      "speaker": "",
+      "text": "",
+      "next": null,
+      "word_ids": []
     },
     {
       "speaker": "Rose",
@@ -711,15 +723,54 @@
     {
       "speaker": "Player",
       "text": "Ok I'll teach you one(1) to five(5) for now",
-      "next": 24,
+      "next": 26,
       "type": "dialogue",
       "word_ids": []
     },
     {
       "speaker": "Rose",
-      "text": "See? Told you. Baby steps, balikbayan.",
-      "next": null,
-      "type": "dialogue"
+      "text": "One(1) is \"\\isaea\"",
+      "next": 27,
+      "type": "dialogue",
+      "word_ids": [
+        "w090"
+      ]
+    },
+    {
+      "speaker": "Rose",
+      "text": "Two(2) is \"\\daywa\"",
+      "next": 28,
+      "type": "dialogue",
+      "word_ids": [
+        "w054"
+      ]
+    },
+    {
+      "speaker": "Rose",
+      "text": "Three(3) is \"\\tatlo\"",
+      "next": 29,
+      "type": "dialogue",
+      "word_ids": [
+        "w227"
+      ]
+    },
+    {
+      "speaker": "Rose",
+      "text": "Four(4) is \"\\ap-at\"",
+      "next": 30,
+      "type": "dialogue",
+      "word_ids": [
+        "w018"
+      ]
+    },
+    {
+      "speaker": "Rose",
+      "text": "Five(5) is \"\\lima\"",
+      "next": 27,
+      "type": "dialogue",
+      "word_ids": [
+        "w123"
+      ]
     }
   ],
   "idle_pool_lola_jonabel": {
