@@ -499,10 +499,14 @@
       "type": "dialogue"
     },
     {
-      "speaker": "Player",
-      "text": "Okay, ako... ikaw... siya. Got it, I think.",
-      "next": 6,
-      "type": "dialogue"
+      "type": "quiz",
+      "questions": [],
+      "choices": [
+        "ako",
+        "ikaw",
+        "imaw"
+      ],
+      "next": 6
     },
     {
       "speaker": "Rose",
