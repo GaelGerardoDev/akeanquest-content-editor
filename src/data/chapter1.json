@@ -473,21 +473,23 @@
     },
     {
       "speaker": "Rose",
-      "text": "Ako ",
+      "text": "\"\\Ako\" that means \"I\" or \"me\"",
       "next": 3,
-      "word_ids": [],
+      "word_ids": [
+        "w011"
+      ],
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
-      "text": "Ako — that's I. Ikaw — you. Siya — he or she.",
+      "text": "\"Ikaw\"  means \"you\"",
       "next": 4,
       "word_ids": [],
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
-      "text": "Ako — that's I. Ikaw — you. Siya — he or she.",
+      "text": "\"Imaw\" means \"he/she or him/her\"",
       "next": 5,
       "word_ids": [],
       "type": "dialogue"
