@@ -538,18 +538,14 @@
       "speaker": "Rose",
       "text": "Well Done!",
       "next": 8,
-      "word_ids": [
-        "w104"
-      ],
+      "word_ids": [],
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
       "text": "Nice try, we can try again later",
       "next": 8,
-      "word_ids": [
-        "w104"
-      ],
+      "word_ids": [],
       "type": "dialogue"
     },
     {
