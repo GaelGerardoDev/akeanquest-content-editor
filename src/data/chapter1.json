@@ -525,7 +525,7 @@
       ],
       "question_templates": [
         "What does \"[word]\" mean?",
-        "What Akeanon word means [gloss]?"
+        "What Akeanon word means \"[gloss]\"?"
       ]
     },
     {
