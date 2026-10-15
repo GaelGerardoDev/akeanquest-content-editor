@@ -2208,9 +2208,18 @@
     {
       "id": "w247",
       "akeanon": "siguro",
-      "category": "Adverb (ad",
+      "category": "Adverb (adv.)",
       "area": "chapter1",
       "gloss": "maybe",
+      "verified": false,
+      "source": ""
+    },
+    {
+      "id": "w248",
+      "akeanon": "si",
+      "category": "",
+      "area": "chapter1",
+      "gloss": "",
       "verified": false,
       "source": ""
     }

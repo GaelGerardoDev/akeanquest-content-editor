@@ -441,7 +441,8 @@
       "type": "dialogue",
       "word_ids": [
         "w246",
-        "w247"
+        "w247",
+        "w248"
       ]
     },
     {
@@ -452,6 +453,7 @@
       "type": "dialogue",
       "word_ids": [
         "w214",
+        "w248",
         "w168"
       ]
     }
