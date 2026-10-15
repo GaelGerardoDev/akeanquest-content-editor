@@ -644,8 +644,8 @@
         "w113",
         "w210"
       ],
-      "success": 18,
-      "failure": null,
+      "success": 22,
+      "failure": 21,
       "question_templates": [
         "\"[word]\" means what?"
       ],
@@ -662,27 +662,58 @@
     },
     {
       "speaker": "Rose",
-      "text": "Do you know how to count to ",
+      "text": "Do you know how to count to ten(10)?",
       "next": 19,
       "word_ids": [
         "w033"
       ],
-      "type": "dialogue"
+      "type": "dialogue",
+      "choices": [
+        {
+          "label": "Yes",
+          "next": 19,
+          "rapport_delta": 0,
+          "patience_delta": 0
+        },
+        {
+          "label": "No\n",
+          "next": 23,
+          "rapport_delta": 0,
+          "patience_delta": 0
+        }
+      ]
     },
     {
       "speaker": "Rose",
-      "text": "Isa, daywa, tatlo, apat, lima — count with me. Point at each one.",
+      "text": "Really?",
       "next": 20,
-      "word_ids": [
-        "w064"
-      ],
+      "word_ids": [],
       "type": "dialogue"
     },
     {
+      "speaker": "",
+      "text": "",
+      "next": null,
+      "word_ids": []
+    },
+    {
+      "speaker": "Rose",
+      "text": "It's fine we can review again when we get home",
+      "next": 18,
+      "word_ids": []
+    },
+    {
+      "speaker": "Rose",
+      "text": "Well Done! You're a natural",
+      "next": 18,
+      "word_ids": []
+    },
+    {
       "speaker": "Player",
-      "text": "Isa, daywa, tatlo, apat, lima. Hey, that wasn't so bad.",
-      "next": 21,
-      "type": "dialogue"
+      "text": "Ok I'll teach you one(1) to five(5) for now",
+      "next": 24,
+      "type": "dialogue",
+      "word_ids": []
     },
     {
       "speaker": "Rose",
