@@ -9,7 +9,7 @@ type SceneEditorProps = {
   onChange: (updatedData: Scene | IdlePool) => void;
   onSave?: () => void;
   onArchive?: () => void;
-  wordBank: WordBankReferenceEntry[];
+  wordBank: WordBankEntry[];
 };
 
 type Point = { x: number; y: number };
@@ -547,7 +547,7 @@ function SceneInspector({
 
     if (type === "quiz") {
       const next = isDialogueNode(node) ? node.next : isPhraseBuilderNode(node) ? node.success : isStartRouter(node) ? node.start_index_if_flag.default ?? null : node.next;
-      const quiz: QuizNode = { type: "quiz", questions: [], choices: [], next };
+      const quiz: QuizNode = { type: "quiz", quiz_type: "manual", questions: [], choices: [], next };
       quiz.choices = quizChoicePool(scene.map((item, i) => i === selected.sceneIndex ? quiz : item), selected.sceneIndex);
       onChange(selected.sceneIndex, quiz);
       return;
