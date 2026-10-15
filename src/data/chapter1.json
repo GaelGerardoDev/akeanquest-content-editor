@@ -512,14 +512,16 @@
       ],
       "choices": [
         "w011",
-        "w084"
+        "w084",
+        "w246"
       ],
       "next": 6,
       "quiz_type": "dynamic",
       "question_template": "What does \"[word]\" mean?",
       "word_pool": [
         "w011",
-        "w084"
+        "w084",
+        "w246"
       ],
       "question_templates": [
         "What does \"[word]\" mean?",
