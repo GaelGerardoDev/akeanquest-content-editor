@@ -128,9 +128,10 @@
     },
     {
       "speaker": "Papa Jobert",
-      "text": "Wow, this place doesn't change. Same humidity as I remember, huh, Ma.",
+      "text": "Wow, this place doesn't change.",
       "next": 2,
-      "type": "dialogue"
+      "type": "dialogue",
+      "word_ids": []
     },
     {
       "speaker": "Papa Jobert",
