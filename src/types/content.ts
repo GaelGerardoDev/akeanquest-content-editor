@@ -38,7 +38,9 @@ export type QuizNode = {
   questions: QuizQuestion[];
   choices: string[];
   next: number | null;
-  /** Dynamic question template; supports [word] and [gloss] placeholders. */
+  /** Dynamic question templates; each supports [word] and [gloss] placeholders. */
+  question_templates?: string[];
+  /** Legacy single-template field, read when question_templates is absent. */
   question_template?: string;
   /** Whether answer choices display the Akeanon word or its gloss. */
   choice_display?: "word" | "gloss";
