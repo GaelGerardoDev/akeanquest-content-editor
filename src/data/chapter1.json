@@ -770,7 +770,7 @@
     {
       "speaker": "Rose",
       "text": "Five(5) is \"\\lima\"",
-      "next": null,
+      "next": 31,
       "type": "dialogue",
       "word_ids": [
         "w123"
