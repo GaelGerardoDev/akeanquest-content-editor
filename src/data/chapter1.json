@@ -704,8 +704,8 @@
     },
     {
       "speaker": "Rose",
-      "text": "It's OK as a review Ill ",
-      "next": null,
+      "text": "It's OK, I'll teach you again as a refresher",
+      "next": 26,
       "word_ids": []
     },
     {
