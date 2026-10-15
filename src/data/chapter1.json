@@ -482,16 +482,20 @@
     },
     {
       "speaker": "Rose",
-      "text": "\"Ikaw\"  means \"you\"",
+      "text": "\"\\Ikaw\"  means \"you\"",
       "next": 4,
-      "word_ids": [],
+      "word_ids": [
+        "w246"
+      ],
       "type": "dialogue"
     },
     {
       "speaker": "Rose",
-      "text": "\"Imaw\" means \"he/she or him/her\"",
+      "text": "\"\\Imaw\" means \"he/she or him/her\"",
       "next": 5,
-      "word_ids": [],
+      "word_ids": [
+        "w084"
+      ],
       "type": "dialogue"
     },
     {
