@@ -20,7 +20,7 @@
     {
       "speaker": "Player",
       "text": "Grandma, are you okay?",
-      "next": 4,
+      "next": 3,
       "type": "dialogue",
       "word_ids": []
     },
