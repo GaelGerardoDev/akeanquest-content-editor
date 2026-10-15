@@ -777,6 +777,12 @@
       ],
       "check_flag": "is_numbers_refresher",
       "check_flag_next": null
+    },
+    {
+      "speaker": "",
+      "text": "",
+      "next": null,
+      "word_ids": []
     }
   ],
   "idle_pool_lola_jonabel": {
