@@ -302,7 +302,7 @@
     },
     {
       "speaker": "Lola Susan",
-      "text": "Player], This is my \\apo Rose",
+      "text": "[Player], This is my \\apo Rose",
       "next": 8,
       "type": "dialogue",
       "word_ids": [
@@ -662,7 +662,7 @@
     },
     {
       "speaker": "Rose",
-      "text": "Do you know how to count to five(10)?",
+      "text": "Do you know how to count to five(5)?",
       "next": 19,
       "word_ids": [
         "w033"
@@ -694,7 +694,14 @@
       "type": "minigame_trigger",
       "minigame_type": "memory_match",
       "success": 21,
-      "failure": 22
+      "failure": 22,
+      "word_pool": [
+        "w090",
+        "w054",
+        "w227",
+        "w018",
+        "w123"
+      ]
     },
     {
       "speaker": "Rose",
