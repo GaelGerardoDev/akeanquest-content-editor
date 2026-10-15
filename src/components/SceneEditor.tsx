@@ -299,8 +299,31 @@ function autoLayout(scene: Scene): Record<string, Point> {
     row.set(visual.id, fallbackRow++);
   });
 
-  // Resolve row collisions by shifting the entire downstream branch,
-  // preserving the relative positions of the colliding node and descendants.
+  // Build reverse edges so a collision can move the branch from its first
+  // node after a fork, rather than starting the shift at the colliding node.
+  const incomingById = new Map<string, string[]>();
+  allVisuals.forEach((visual) => incomingById.set(visual.id, []));
+  outgoingById.forEach((children, parent) => {
+    children.forEach((child) => incomingById.get(child)?.push(parent));
+  });
+
+  const findBranchRoot = (nodeId: string): string => {
+    let current = nodeId;
+    const visited = new Set<string>();
+    while (!visited.has(current)) {
+      visited.add(current);
+      const parents = incomingById.get(current) ?? [];
+      if (parents.length !== 1) return current;
+      const parent = parents[0];
+      const siblings = outgoingById.get(parent) ?? [];
+      // The current node is the start of this branch when its parent forks.
+      if (siblings.length > 1) return current;
+      current = parent;
+    }
+    return current;
+  };
+
+  // Shift the chosen branch root and all downstream nodes together.
   const shiftBranchDown = (branchRoot: string, delta: number) => {
     const pending = [branchRoot];
     const visited = new Set<string>();
@@ -314,21 +337,26 @@ function autoLayout(scene: Scene): Record<string, Point> {
   };
 
   const occupiedRowsByColumn = new Map<number, Set<number>>();
-  visuals(scene).forEach((visual) => {
-    const visualColumn = column.get(visual.id) ?? 0;
-    const occupied = occupiedRowsByColumn.get(visualColumn) ?? new Set<number>();
-    const preferredRow = row.get(visual.id) ?? 0;
+  [...allVisuals]
+    .sort((a, b) => (column.get(a.id) ?? 0) - (column.get(b.id) ?? 0) || (row.get(a.id) ?? 0) - (row.get(b.id) ?? 0))
+    .forEach((visual) => {
+      const visualColumn = column.get(visual.id) ?? 0;
+      const occupied = occupiedRowsByColumn.get(visualColumn) ?? new Set<number>();
+      const preferredRow = row.get(visual.id) ?? 0;
 
-    if (occupied.has(preferredRow)) {
-      let nextFreeRow = preferredRow;
-      while (occupied.has(nextFreeRow)) nextFreeRow += 1;
-      shiftBranchDown(visual.id, nextFreeRow - preferredRow);
-    }
+      if (occupied.has(preferredRow)) {
+        const branchRoot = findBranchRoot(visual.id);
+        const rootColumn = column.get(branchRoot) ?? visualColumn;
+        const rootOccupied = occupiedRowsByColumn.get(rootColumn) ?? new Set<number>();
+        let nextFreeRootRow = row.get(branchRoot) ?? preferredRow;
+        while (rootOccupied.has(nextFreeRootRow)) nextFreeRootRow += 1;
+        shiftBranchDown(branchRoot, nextFreeRootRow - (row.get(branchRoot) ?? preferredRow));
+      }
 
-    const finalRow = row.get(visual.id) ?? preferredRow;
-    occupied.add(finalRow);
-    occupiedRowsByColumn.set(visualColumn, occupied);
-  });
+      const finalRow = row.get(visual.id) ?? preferredRow;
+      occupied.add(finalRow);
+      occupiedRowsByColumn.set(visualColumn, occupied);
+    });
 
   visuals(scene).forEach((visual) => {
     positions[visual.id] = {
