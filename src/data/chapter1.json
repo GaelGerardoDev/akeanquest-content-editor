@@ -685,7 +685,7 @@
     },
     {
       "speaker": "Rose",
-      "text": "Really?",
+      "text": "Really? Let's play a game then",
       "next": 20,
       "word_ids": [],
       "type": "dialogue"
@@ -776,13 +776,57 @@
         "w123"
       ],
       "check_flag": "is_numbers_refresher",
-      "check_flag_next": null
+      "check_flag_next": 36
+    },
+    {
+      "speaker": "Rose",
+      "text": "Let's play a game to see if you got it.",
+      "next": 32,
+      "word_ids": []
+    },
+    {
+      "type": "minigame_trigger",
+      "minigame_type": "memory_match",
+      "success": 34,
+      "failure": 33
+    },
+    {
+      "speaker": "Rose",
+      "text": "Ok we can try again at home",
+      "next": 35,
+      "word_ids": []
+    },
+    {
+      "speaker": "Rose",
+      "text": "Well Done",
+      "next": 35,
+      "word_ids": []
     },
     {
       "speaker": "",
-      "text": "",
+      "text": "Let's go home.",
       "next": null,
       "word_ids": []
+    },
+    {
+      "speaker": "Rose",
+      "text": "Do you want to play agin?",
+      "next": null,
+      "word_ids": [],
+      "choices": [
+        {
+          "label": "Yes",
+          "next": 32,
+          "rapport_delta": 0,
+          "patience_delta": 0
+        },
+        {
+          "label": "No\n",
+          "next": 33,
+          "rapport_delta": 0,
+          "patience_delta": 0
+        }
+      ]
     }
   ],
   "idle_pool_lola_jonabel": {
