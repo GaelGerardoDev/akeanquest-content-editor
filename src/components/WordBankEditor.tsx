@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
+import { extractWordReferences } from "../utils/wordReferences";
 
 type WordEntry = { id:string; akeanon:string; category:string; area:string; gloss:string; verified:boolean; source:string };
 type WordBank = { words: WordEntry[] };
 
-export default function WordBankEditor({data,onChange}:{data:WordBank;onChange:(data:WordBank)=>void}) {
+export default function WordBankEditor({data,onChange,chapters}:{data:WordBank;onChange:(data:WordBank)=>void;chapters:Record<string,unknown>}) {
  const [query,setQuery]=useState("");
  const [selectedId,setSelectedId]=useState<string|null>(data.words[0]?.id??null);
  const [collapsed,setCollapsed]=useState<Set<string>>(new Set());
@@ -27,6 +28,19 @@ export default function WordBankEditor({data,onChange}:{data:WordBank;onChange:(
  },[matches]);
 
  const selected=data.words.find(w=>w.id===selectedId)??null;
+
+ const unresolvedReferences=useMemo(()=>{
+  const texts:string[]=[];
+  const visit=(value:unknown)=>{
+   if(Array.isArray(value)){value.forEach(visit);return;}
+   if(value&&typeof value==="object"){Object.values(value as Record<string,unknown>).forEach(visit);return;}
+   if(typeof value==="string"&&value.includes("\\"))texts.push(value);
+  };
+  visit(chapters);
+  const references=[...new Set(texts.flatMap(extractWordReferences))];
+  const existing=new Set(data.words.map(w=>w.akeanon.trim().toLocaleLowerCase()).filter(Boolean));
+  return references.filter(reference=>!existing.has(reference.toLocaleLowerCase()));
+ },[chapters,data.words]);
 
  const categorySuggestions=useMemo(()=>{
   const q=categoryQuery.trim().toLocaleLowerCase();
@@ -64,11 +78,11 @@ export default function WordBankEditor({data,onChange}:{data:WordBank;onChange:(
   }
  }
 
- function add(){
+ function add(akeanon = ""){
   let n=data.words.length+1,id=`w${String(n).padStart(3,"0")}`;
   const used=new Set(data.words.map(w=>w.id));
   while(used.has(id)){n++;id=`w${String(n).padStart(3,"0")}`}
-  const w={id,akeanon:"",category:"",area:"chapter1",gloss:"",verified:false,source:""};
+  const w={id,akeanon,category:"",area:"chapter1",gloss:"",verified:false,source:""};
   onChange({words:[...data.words,w]});
   setSelectedId(id);
   setQuery("");
@@ -101,6 +115,11 @@ export default function WordBankEditor({data,onChange}:{data:WordBank;onChange:(
    <div><strong>Word Bank</strong><span>{data.words.length} entries</span></div>
    <div className="word-bank-actions"><button type="button" onClick={add}>+ Word</button><button type="button" onClick={sortAlphabetically}>A–Z</button><button type="button" className="save-button" onClick={save}>Save JSON</button><button type="button" className="danger" onClick={remove} disabled={!selected}>Delete</button></div>
   </div>
+  {unresolvedReferences.length>0&&<section className="word-bank-unresolved" aria-label="Unmatched chapter words">
+   <div className="word-bank-unresolved-heading"><strong>Escaped words not in Word Bank</strong><span>{unresolvedReferences.length} missing</span></div>
+   <p>These words are marked with a backslash in chapter text. Select one to create a matching word-bank entry.</p>
+   <div className="word-bank-unresolved-list">{unresolvedReferences.map(reference=><button type="button" key={reference} onClick={()=>add(reference)} title={`Create word-bank entry for ${reference}`}>+ <strong>{reference}</strong></button>)}</div>
+  </section>}
   <div className="word-bank-body">
    <section className="word-bank-list">
     <div className="word-bank-search"><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search words, IDs, glosses…" /></div>
