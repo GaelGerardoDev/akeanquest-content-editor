@@ -26,12 +26,24 @@ export type DialogueNode = {
   set_flag_on_enter?: string;
 };
 
+export type QuizQuestion = {
+  question: string;
+  correct_answer: string;
+};
+
+export type QuizNode = {
+  type: "quiz";
+  questions: QuizQuestion[];
+  choices: string[];
+  next: number | null;
+};
+
 export type StartRouter = {
   type: "start_router";
   start_index_if_flag: Record<string, number>;
 };
 
-export type Scene = Array<StartRouter | DialogueNode | PhraseBuilderNode>;
+export type Scene = Array<StartRouter | DialogueNode | PhraseBuilderNode | QuizNode>;
 
 export type IdleEntry = {
   speaker: string;
