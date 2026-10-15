@@ -69,6 +69,8 @@ export type QuizNode = FlaggedNode & {
 export type MinigameTriggerNode = FlaggedNode & {
   type: "minigame_trigger";
   minigame_type: string;
+  /** Word Bank IDs available to this minigame trigger. */
+  word_pool?: string[];
   success: number | null;
   failure: number | null;
 };
