@@ -500,7 +500,12 @@
     },
     {
       "type": "quiz",
-      "questions": [],
+      "questions": [
+        {
+          "question": "",
+          "correct_answer": ""
+        }
+      ],
       "choices": [
         "ako",
         "ikaw",
