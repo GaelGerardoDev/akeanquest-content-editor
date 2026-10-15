@@ -55,12 +55,19 @@ export type QuizNode = {
   word_pool?: string[];
 };
 
+export type MinigameTriggerNode = {
+  type: "minigame_trigger";
+  minigame_type: string;
+  success: number | null;
+  failure: number | null;
+};
+
 export type StartRouter = {
   type: "start_router";
   start_index_if_flag: Record<string, number>;
 };
 
-export type Scene = Array<StartRouter | DialogueNode | PhraseBuilderNode | QuizNode>;
+export type Scene = Array<StartRouter | DialogueNode | PhraseBuilderNode | QuizNode | MinigameTriggerNode>;
 
 export type IdleEntry = {
   speaker: string;
