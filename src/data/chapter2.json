@@ -553,8 +553,8 @@
     },
     {
       "type": "dialogue",
-      "speaker": "Lola Susa",
-      "text": "",
+      "speaker": "Lola Susan",
+      "text": "Welcome home everyone!",
       "next": null,
       "word_ids": []
     }
