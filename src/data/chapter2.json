@@ -543,5 +543,20 @@
       "word_ids": [],
       "type": "dialogue"
     }
+  ],
+  "scene_0_home_atlast": [
+    {
+      "type": "start_router",
+      "start_index_if_flag": {
+        "default": 1
+      }
+    },
+    {
+      "type": "dialogue",
+      "speaker": "",
+      "text": "",
+      "next": null,
+      "word_ids": []
+    }
   ]
 }
