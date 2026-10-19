@@ -553,7 +553,7 @@
     },
     {
       "type": "dialogue",
-      "speaker": "",
+      "speaker": "Lola",
       "text": "",
       "next": null,
       "word_ids": []
